@@ -35,6 +35,9 @@
 
 			var camera, scene, renderer;
 
+			var bike;
+			var prev_mouse_x = 0, prev_mouse_y = 0;
+
 			var mouseX = 0, mouseY = 0;
 
 			var windowHalfX = window.innerWidth / 2;
@@ -51,7 +54,7 @@
 				document.body.appendChild( container );
 
 				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
-				camera.position.z = 100;
+				camera.position.z = 20;
 
 				// scene
 
@@ -109,8 +112,10 @@
 
 					} );
 
-					object.position.y = - 80;
+					object.position = (0,0,0);
 					scene.add( object );
+
+					bike = object;
 
 				}, onProgress, onError );
 
@@ -145,6 +150,12 @@
 				mouseX = ( event.clientX - windowHalfX ) / 2;
 				mouseY = ( event.clientY - windowHalfY ) / 2;
 
+				bike.rotation.x += (mouseY - prev_mouse_y) / 50;
+				bike.rotation.y += (mouseX - prev_mouse_x) / 50;
+
+				prev_mouse_x = mouseX;
+				prev_mouse_y = mouseY;
+
 			}
 
 			//
@@ -157,9 +168,6 @@
 			}
 
 			function render() {
-
-				camera.position.x += ( mouseX - camera.position.x ) * .05;
-				camera.position.y += ( - mouseY - camera.position.y ) * .05;
 
 				camera.lookAt( scene.position );
 
