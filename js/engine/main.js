@@ -5,8 +5,9 @@
 // constants
 var FOV = 75, NEAR_PLANE = 0.1, FAR_PLANE = 1000;
 
-var scene, camera,controls, renderer, container
+var scene, camera, controls, renderer, container;
 var skyBox;
+var ship;
 
 // initialization
 function init() {
@@ -53,14 +54,12 @@ function init() {
 	container.appendChild( renderer.domElement );
 	
 	window.addEventListener( 'resize', onWindowResize, false );
-
-	render();
 }
 
 // create and add sky sphere
 function createSkySphere() {
 	var geometry = new THREE.SphereGeometry(10000, 60, 40);
-	var material = new THREE.MeshBasicMaterial({ map: THREE.ImageUtils.loadTexture('img/skybox/background.jpg') });
+	var material = new THREE.MeshBasicMaterial({ map: THREE.ImageUtils.loadTexture('img/skybox/sea.jpg') });
 
 	skyBox = new THREE.Mesh(geometry, material);
 	skyBox.scale.set(-1, 1, 1);
@@ -74,6 +73,8 @@ function createSpaceShip() {
 	var loader = new THREE.OBJMTLLoader();
 	loader.load( 'models/FeisarShip/Feisar_Ship.obj', 'models/FeisarShip/Feisar_Ship.mtl', function ( object ) {
 		scene.add( object );
+		ship = object;
+		animate();
 	});
 }
 
@@ -91,8 +92,10 @@ function onWindowResize() {
 }
 
 function animate() {
+	ship.position.z += 2;
 	requestAnimationFrame( animate );
 	controls.update();
+	render();
 }
 
 // render loop 
