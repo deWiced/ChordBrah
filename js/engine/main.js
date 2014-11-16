@@ -7,6 +7,7 @@ var FOV = 75, NEAR_PLANE = 0.1, FAR_PLANE = 1000;
 
 var scene, camera,controls, renderer, container
 var skyBox;
+var ship;
 
 // initialization
 function init() {
@@ -54,8 +55,6 @@ function init() {
 	container.appendChild( renderer.domElement );
 	
 	window.addEventListener( 'resize', onWindowResize, false );
-
-	render();
 }
 
 // create and add sky sphere
@@ -93,6 +92,8 @@ function createSpaceShip() {
 	var loader = new THREE.OBJMTLLoader();
 	loader.load( 'models/FeisarShip/Feisar_Ship.obj', 'models/FeisarShip/Feisar_Ship.mtl', function ( object ) {
 		scene.add( object );
+		ship = object;
+		animate(); 
 	});
 }
 
@@ -110,8 +111,10 @@ function onWindowResize() {
 }
 
 function animate() {
+	ship.position.z += 2;
 	requestAnimationFrame( animate );
 	controls.update();
+	render();
 }
 
 // render loop 
