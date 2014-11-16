@@ -7,11 +7,13 @@ var FOV = 75, NEAR_PLANE = 0.1, FAR_PLANE = 1000;
 
 var scene, camera, controls, renderer, container
 var skyBox;
-var ship;
+var ship, shipControls;
+var clock = new THREE.Clock();
+var shipStartPosition = -9000
 
 // initialization
 function init() {
-	
+
 	// SCENE
 	scene = new THREE.Scene();
 	
@@ -57,9 +59,8 @@ function createSkySphere() {
 
 // create and add sky box
 function createSkyBox(urlPrefix, type) {
-	//var directions = ["back", "front", "top", "bottom","right", "left" ];
 	var directions = ["right", "left", "top", "bottom", "front", "back"];
-	var skyGeometry = new THREE.CubeGeometry( 10000, 10000, 10000 );
+	var skyGeometry = new THREE.CubeGeometry( 20000, 20000, 20000 );
 	
 	var materialArray = [];
 	for (var i = 0; i < 6; i++)
@@ -77,10 +78,13 @@ function createSkyBox(urlPrefix, type) {
 function createSpaceShip() {
 	var loader = new THREE.OBJMTLLoader();
 	loader.load( 'models/FeisarShip/Feisar_Ship.obj', 'models/FeisarShip/Feisar_Ship.mtl', function ( object ) {
-		scene.add( object );
-		ship = object;
-		ship.position.set(0,0,0);
 
+		//scene.add( object );
+		ship = new THREE.Object3D();
+		scene.add(ship);
+		ship.add(object);
+		ship.position.set(0,0,shipStartPosition);
+		
 		camera = new Camera({
 			fov: 75,
 			aspect_ratio: window.innerWidth / window.innerHeight,
@@ -91,7 +95,12 @@ function createSpaceShip() {
 			dir: new THREE.Vector3(0, -1, 1),
 			target: ship
 		});
-
+		
+		// SHIP CONTROLS
+		shipControls = new ObjectControls(ship);
+		shipControls.movementSpeed = 1000;
+		//shipControls.autoForward = true;
+		
 		animate(); 
 	});
 }
@@ -108,7 +117,7 @@ function onWindowResize() {
 }
 
 function animate() {
-	ship.position.z += 2;
+
 	camera.updateCamera();
 	requestAnimationFrame( animate );
 
@@ -117,6 +126,8 @@ function animate() {
 
 // render loop 
 function render() {
+	var delta = clock.getDelta();
+	shipControls.update(delta);
 	renderer.render( scene, camera.camera );
 }
 
