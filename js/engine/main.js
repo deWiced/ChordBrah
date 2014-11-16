@@ -117,7 +117,8 @@ function onWindowResize() {
 }
 
 function animate() {
-
+	var delta = clock.getDelta();
+	shipControls.update(delta);
 	camera.updateCamera();
 	requestAnimationFrame( animate );
 
@@ -126,8 +127,6 @@ function animate() {
 
 // render loop 
 function render() {
-	var delta = clock.getDelta();
-	shipControls.update(delta);
 	renderer.render( scene, camera.camera );
 }
 
