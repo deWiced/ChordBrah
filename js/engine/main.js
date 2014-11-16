@@ -73,7 +73,7 @@ function createSkySphere() {
 // create and add sky box
 function createSkyBox(urlPrefix, type) {
 	//var directions = ["back", "front", "top", "bottom","right", "left" ];
-	var directions = ["back", "right", "top", "bottom","front", "left" ];
+	var directions = ["right", "left", "top", "bottom", "front", "back"];
 	var skyGeometry = new THREE.CubeGeometry( 10000, 10000, 10000 );
 	
 	var materialArray = [];
