@@ -10,7 +10,7 @@ var skyBox;
 
 // initialization
 function init() {
-	camera = new THREE.PerspectiveCamera( FOV, window.innerWidth / window.innerHeight, 0.1, 20000 );
+	camera = new THREE.PerspectiveCamera( FOV, window.innerWidth / window.innerHeight, 0.1, 100000 );
 	camera.position.z = 500;
 	
 	// CONTROLS
@@ -41,7 +41,8 @@ function init() {
 	scene.add( hemisphereLight )
 	
 	// SKYBOX
-	createSkySphere();
+	//createSkySphere();
+	createSkyBox("img/skybox/red/red_", ".jpg");
 	
 	// SPACESHIP
 	createSpaceShip();
@@ -67,6 +68,24 @@ function createSkySphere() {
 	//skyBox.rotation.order = 'XZY';
 	//skyBox.renderDepth = 100;
 	scene.add(skyBox);
+}
+
+// create and add sky box
+function createSkyBox(urlPrefix, type) {
+	//var directions = ["back", "front", "top", "bottom","right", "left" ];
+	var directions = ["back", "right", "top", "bottom","front", "left" ];
+	var skyGeometry = new THREE.CubeGeometry( 10000, 10000, 10000 );
+	
+	var materialArray = [];
+	for (var i = 0; i < 6; i++)
+		materialArray.push( new THREE.MeshBasicMaterial({
+		map: THREE.ImageUtils.loadTexture( urlPrefix + directions[i] + type ),
+		side: THREE.BackSide
+	})); 
+	
+	var skyMaterial = new THREE.MeshFaceMaterial( materialArray );
+	var skyBox = new THREE.Mesh( skyGeometry, skyMaterial );
+	scene.add( skyBox ); 
 }
 
 //create and add space ship
