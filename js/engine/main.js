@@ -5,26 +5,12 @@
 // constants
 var FOV = 75, NEAR_PLANE = 0.1, FAR_PLANE = 1000;
 
-var scene, camera,controls, renderer, container
+var scene, camera, controls, renderer, container
 var skyBox;
 var ship;
 
 // initialization
 function init() {
-	camera = new THREE.PerspectiveCamera( FOV, window.innerWidth / window.innerHeight, 0.1, 100000 );
-	camera.position.z = 500;
-	
-	// CONTROLS
-	controls = new THREE.TrackballControls( camera );
-	controls.rotateSpeed = 1.0;
-	controls.zoomSpeed = 1.2;
-	controls.panSpeed = 0.8;
-	controls.noZoom = false;
-	controls.noPan = false;
-	controls.staticMoving = true;
-	controls.dynamicDampingFactor = 0.3;
-	controls.keys = [ 65, 83, 68 ];
-	controls.addEventListener( 'change', render );
 	
 	// SCENE
 	scene = new THREE.Scene();
@@ -93,18 +79,29 @@ function createSpaceShip() {
 	loader.load( 'models/FeisarShip/Feisar_Ship.obj', 'models/FeisarShip/Feisar_Ship.mtl', function ( object ) {
 		scene.add( object );
 		ship = object;
+		ship.position.set(0,0,0);
+
+		camera = new Camera({
+			fov: 75,
+			aspect_ratio: window.innerWidth / window.innerHeight,
+			near_plane: 0.1,
+			far_plane: 100000,
+			position: new THREE.Vector3(0, 200, -500),
+			up: new THREE.Vector3(0, 1, 0),
+			dir: new THREE.Vector3(0, -1, 1),
+			target: ship
+		});
+
 		animate(); 
 	});
 }
 
 function onWindowResize() {
 
-	camera.aspect = window.innerWidth / window.innerHeight;
-	camera.updateProjectionMatrix();
+	camera.camera.aspect = window.innerWidth / window.innerHeight;
+	camera.camera.updateProjectionMatrix();
 
 	renderer.setSize( window.innerWidth, window.innerHeight );
-
-	controls.handleResize();
 
 	render();
 
@@ -112,13 +109,14 @@ function onWindowResize() {
 
 function animate() {
 	ship.position.z += 2;
+	camera.updateCamera();
 	requestAnimationFrame( animate );
-	controls.update();
+
 	render();
 }
 
 // render loop 
 function render() {
-	renderer.render( scene, camera );
+	renderer.render( scene, camera.camera );
 }
 
