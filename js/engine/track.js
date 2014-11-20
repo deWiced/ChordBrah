@@ -3,18 +3,32 @@
 function createTrack(){
 
 	var randomPoints = [
-	                    new THREE.Vector3(0,0,shipStartPosition),
-	                    new THREE.Vector3(-2000,0,-8000),
-	                    new THREE.Vector3(1000,2000,-7000),
-	                    new THREE.Vector3(2000,3000,-4000),
-	                    new THREE.Vector3(0,-1000,-1000),
-	                    new THREE.Vector3(2000,1500,1200),
-	                    new THREE.Vector3(2000,3000,3000),
-	                    new THREE.Vector3(400,0,4500),
-	                    new THREE.Vector3(400,-2000,4500),
-	                    new THREE.Vector3(400,-4000,4500),
-	                    new THREE.Vector3(400,-20000,4500),
-	                    ];
+		// down
+	    new THREE.Vector3(0,0,shipStartPosition),
+	    new THREE.Vector3(300,1000,-500),
+	    new THREE.Vector3(400,-2000,4500),
+	    new THREE.Vector3(400,-5000,4500),
+	    new THREE.Vector3(4000,-10000,4500),
+	    new THREE.Vector3(4000,-15000,8500),
+	    new THREE.Vector3(400,-20000,8500),
+	    new THREE.Vector3(700,-30000,7500),
+	    // back up
+	    new THREE.Vector3(10000,-30000,4500),
+	    new THREE.Vector3(10000,-29000,1000),
+	    new THREE.Vector3(8000,-20000,1000),
+	    new THREE.Vector3(3000,-18000,500),
+	    new THREE.Vector3(3000,-14000,-300),
+	    new THREE.Vector3(1000,-10000,-3000),
+	    new THREE.Vector3(1000,-5000,-4000),
+	    new THREE.Vector3(-5000,-3000, -15000),
+	    //new THREE.Vector3(-5000,1000, -7000),
+	    /*new THREE.Vector3(-500,3000, -7000),
+	    new THREE.Vector3(-700,3000,-10000),
+	    new THREE.Vector3(-1000,1000,-11000),
+	    new THREE.Vector3(-300,500,500),*/
+	    //new THREE.Vector3(0,0,shipStartPosition),
+	
+	];
 		
 	var randomSpline =  new THREE.SplineCurve3( randomPoints );
 	
