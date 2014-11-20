@@ -149,7 +149,7 @@ function animate() {
 // render loop 
 function render() {
 	var time = Date.now();
-	var looptime = 15 * 1000;
+	var looptime = 25 * 1000;
 	var t = ( time % looptime ) / looptime;
 
 	var pos = tube.parameters.path.getPointAt( t );
