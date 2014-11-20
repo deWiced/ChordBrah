@@ -36,7 +36,7 @@ function init() {
 	var sun = new THREE.DirectionalLight( 0xffff7f, 3.0);
 	sun.position.set(100000/2, 100000/2, 100000/2);
 	scene.add( sun );
-	
+
 	//add shipTEMP camera
 	parent = new THREE.Object3D();
 	parent.position.set(0,0,shipStartPosition);
@@ -149,7 +149,7 @@ function animate() {
 // render loop 
 function render() {
 	var time = Date.now();
-	var looptime = 20 * 1000;
+	var looptime = 7 * 1000;
 	var t = ( time % looptime ) / looptime;
 
 	var pos = tube.parameters.path.getPointAt( t );
@@ -170,7 +170,7 @@ function render() {
 	normal.copy( binormal ).cross( dir );
 
 	// We move on a offset on its binormal -> ta offset je zato da nisi notr v tubu -> premaknemno se gor za 15 v smeri normale
-	pos.add( normal.clone().multiplyScalar( offset ) );
+	//pos.add( normal.clone().multiplyScalar( offset ) );
 	
 
 	ship.position.copy( pos );
@@ -191,8 +191,8 @@ function render() {
 	ship.rotation.setFromRotationMatrix( ship.matrix, ship.rotation.order );
 	cameraShip.rotation.setFromRotationMatrix( cameraShip.matrix, cameraShip.rotation.order );
 	
-	cameraShip.translateY(40);
-	cameraShip.translateZ(-80)
+	cameraShip.translateY(300);
+	cameraShip.translateZ(800)
 	renderer.render( scene, cameraShip );
 }
 

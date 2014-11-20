@@ -11,6 +11,9 @@ function createTrack(){
 	                    new THREE.Vector3(2000,1500,1200),
 	                    new THREE.Vector3(2000,3000,3000),
 	                    new THREE.Vector3(400,0,4500),
+	                    new THREE.Vector3(400,-2000,4500),
+	                    new THREE.Vector3(400,-4000,4500),
+	                    new THREE.Vector3(400,-20000,4500),
 	                    ];
 		
 	var randomSpline =  new THREE.SplineCurve3( randomPoints );
@@ -24,8 +27,10 @@ function createTrack(){
 	};
 	
 	
-	tube = new THREE.TubeGeometry(randomSpline, 100, 100, 3, false);
-	addGeometry(tube, 0xff00ff);
+	//tube = new THREE.TubeGeometry(randomSpline, 100, 100, 3, false); 
+	tube = new THREE.TubeGeometry(randomSpline, 100, 500, 8, false);
+	//tube = 
+	addGeometry(tube, 0xffffff);
 	//setScale(1.2);
 	//
 }
@@ -35,9 +40,9 @@ function addGeometry( geometry, color ) {
 	// 3d shape
 
 	tubeMesh = THREE.SceneUtils.createMultiMaterialObject( geometry, [
-		new THREE.MeshLambertMaterial({
+		/*new THREE.MeshLambertMaterial({
 			color: color
-		}),
+		}),*/
 		new THREE.MeshBasicMaterial({
 			color: color,
 			opacity: 0.3,
