@@ -5,16 +5,16 @@ Camera = function(options)
 	this.updateCamera = function()
 	{
 		this.camera.position.set(
-			this.options.target.position.x, 
-			this.options.target.position.y + this.options.position.y, 
-			this.options.target.position.z + this.options.position.z
+			this.options.camera_target.position.x, 
+			this.options.camera_target.position.y + this.options.position.y, 
+			this.options.camera_target.position.z + this.options.position.z
 		);
 
 		this.camera.up = this.options.up;
 		this.camera.lookAt(new THREE.Vector3(
-			this.options.target.position.x, 
-			this.options.target.position.y, 
-			this.options.target.position.z)
+			this.options.camera_target.position.x, 
+			this.options.camera_target.position.y, 
+			this.options.camera_target.position.z)
 		);
 	}
 

@@ -32,6 +32,9 @@ ObjectControls = function ( object, domElement ) {
 	this.moveLeft = false;
 	this.moveRight = false;
 
+	this.x_offset = 0;
+	this.y_offset = 0;
+	
 	if ( this.domElement !== document ) {
 
 		this.domElement.setAttribute( 'tabindex', -1 );
@@ -123,12 +126,22 @@ ObjectControls = function ( object, domElement ) {
 
 		var actualMoveSpeed = delta * this.movementSpeed;
 
-		if ( this.moveForward || ( this.autoForward && !this.moveBackward ) ) this.object.translateZ( ( actualMoveSpeed + this.autoSpeedFactor ) );
-		if ( this.moveBackward ) this.object.translateZ( -actualMoveSpeed );
-
-		if ( this.moveLeft ) this.object.translateX(  actualMoveSpeed );
-		if ( this.moveRight ) this.object.translateX( -actualMoveSpeed );
-
+		if ( this.moveForward || ( this.autoForward && !this.moveBackward ) ) {
+			//this.object.translateZ( ( actualMoveSpeed + this.autoSpeedFactor ) );
+			this.y_offset += actualMoveSpeed;
+		}
+		if ( this.moveBackward ) {
+			//this.object.translateZ( -actualMoveSpeed );
+			this.y_offset -= actualMoveSpeed;
+		}
+		if ( this.moveLeft ) {
+			//this.object.translateX(  actualMoveSpeed );
+			this.x_offset += actualMoveSpeed;
+		}
+		if ( this.moveRight ) {
+			//this.object.translateX( -actualMoveSpeed );
+			this.x_offset -= actualMoveSpeed;
+		}
 		if ( this.moveUp ) this.object.translateY( actualMoveSpeed );
 		if ( this.moveDown ) this.object.translateY( - actualMoveSpeed );
 

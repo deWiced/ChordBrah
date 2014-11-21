@@ -20,11 +20,13 @@ var targetRotation = 0;
 
 var parent, cameraShip;
 
+var target;
+
 // initialization
 function init() {
 
 	// SOUND
-	addSound("audio_files/", "Rats.wav");	
+	addSound("audio_files/", "Sky.wav");	
 	
 	// SCENE
 	scene = new THREE.Scene();
@@ -43,7 +45,21 @@ function init() {
 	scene.add( parent );
 	
 	cameraShip = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.01, 100000 );
-	
+
+	target = new Target();
+
+	/*
+	camera = new Camera({
+			fov: 75,
+			aspect_ratio: window.innerWidth / window.innerHeight,
+			near_plane: 0.1,
+			far_plane: 100000,
+			position: new THREE.Vector3(0, 200, -500),
+			up: new THREE.Vector3(0, 1, 0),
+			dir: new THREE.Vector3(0, -1, 1),
+			camera_target: target
+		});
+	*/
 	// SKYBOX
 	//createSkySphere();
 	createSkyBox("img/skybox/red/red_", ".jpg");
@@ -103,17 +119,6 @@ function createSpaceShip() {
 		ship.add(object);
 		ship.position.set(0,0,shipStartPosition);
 		
-	/*	camera = new Camera({
-			fov: 75,
-			aspect_ratio: window.innerWidth / window.innerHeight,
-			near_plane: 0.1,
-			far_plane: 100000,
-			position: new THREE.Vector3(0, 200, -500),
-			up: new THREE.Vector3(0, 1, 0),
-			dir: new THREE.Vector3(0, -1, 1),
-			target: ship
-		});*/
-		
 		// SHIP CONTROLS
 		shipControls = new ObjectControls(ship);
 		shipControls.movementSpeed = 1000;
@@ -138,9 +143,9 @@ function onWindowResize() {
 }
 
 function animate() {
-	/*var delta = clock.getDelta();
+	var delta = clock.getDelta();
 	shipControls.update(delta);
-	camera.updateCamera();*/
+	//camera.updateCamera();
 	requestAnimationFrame( animate );
 
 	render();
@@ -165,16 +170,16 @@ function render() {
 
 	var dir = tube.parameters.path.getTangentAt( t );
 
-	var offset = 50;
+	//var offset = 50;
 
 	normal.copy( binormal ).cross( dir );
 
+	target.update(pos, normal);
 	// We move on a offset on its binormal -> ta offset je zato da nisi notr v tubu -> premaknemno se gor za 15 v smeri normale
 	//pos.add( normal.clone().multiplyScalar( offset ) );
 	
-
-	ship.position.copy( pos );
-	cameraShip.position.copy(pos);
+	ship.position.copy( target.position );
+	cameraShip.position.copy(target.position);
 	
 	// Camera Orientation 1 - default look at
 	// splineCamera.lookAt( lookAt );
@@ -186,13 +191,20 @@ function render() {
 	lookAt.copy(pos ).sub( dir );
 	lookAt2.copy(pos).add(dir);
 	//normal.multiplyScalar(-1);
-	ship.matrix.lookAt(ship.position, lookAt, normal);
-	cameraShip.matrix.lookAt(cameraShip.position, lookAt2, normal);
+	//normal.applyAxisAngle(lookAt2,30);
+	
+	ship.matrix.lookAt(ship.position, lookAt, target.normal);
 	ship.rotation.setFromRotationMatrix( ship.matrix, ship.rotation.order );
+	
+	cameraShip.matrix.lookAt(cameraShip.position, lookAt2, target.normal);
 	cameraShip.rotation.setFromRotationMatrix( cameraShip.matrix, cameraShip.rotation.order );
 	
 	cameraShip.translateY(300);
-	cameraShip.translateZ(800)
+	cameraShip.translateZ(800);
+
+	ship.translateX(shipControls.x_offset);
+	ship.translateY(shipControls.y_offset);
+
 	renderer.render( scene, cameraShip );
 }
 
