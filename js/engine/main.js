@@ -158,7 +158,8 @@ function render() {
 	var t = ( time % looptime ) / looptime;
 
 	var pos = tube.parameters.path.getPointAt( t );
-	
+	//pos = tube.parameters.path.getPoint(0.5);
+
 	// interpolation
 	var segments = tube.tangents.length;
 	var pickt = t * segments;

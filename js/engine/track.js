@@ -26,8 +26,7 @@ function createTrack(){
 	    new THREE.Vector3(-700,3000,-10000),
 	    new THREE.Vector3(-1000,1000,-11000),
 	    new THREE.Vector3(-300,500,500),*/
-	    //new THREE.Vector3(0,0,shipStartPosition),
-	
+	    //new THREE.Vector3(0,0,shipStartPosition),    	
 	];
 		
 	var randomSpline =  new THREE.SplineCurve3( randomPoints );
