@@ -22,11 +22,68 @@ var parent, cameraShip;
 
 var target;
 
+var material = new THREE.LineBasicMaterial({
+    color: 0x0000ff
+});
+
+var SHIP_SPEED = 100;
+var physical_track = 
+	{
+		length: 0,
+		checkpoints: []
+};
+var audio_track = 
+	{
+		info:
+			{
+				trackName: "Test",
+				trackLength: 16 * 6, // TODO Kako najbol predstavt track length
+				timeSigniature: "4/4",
+				tempo: 100,
+				preload: [ "E-major", "C-major", "G-major" ]
+			},
+		noteDurations:
+			{
+				"full": 240 / 100,
+				"half": 120 / 100,
+				"quater": 60 / 100,
+				"eighth": 30 / 100,
+				"sixteenth": 15 / 100
+			},
+		sections: 
+			[
+		        {
+		        	name: "intro",
+		        	repeate: 2,
+		        	chords: 
+		        		[
+		        	         {name: "E-major", duration: 1.2, chekpoint: false},
+		        	         {name: "C-major", duration: 1.2, chekpoint: false},
+		        	         {name: "E-major", duration: 1.2, chekpoint: false},
+		        	         {name: "C-major", duration: 1.2, chekpoint: false},
+		        	         {name: "G-major", duration: 1.2, chekpoint: false},
+		        	         {name: "E-major", duration: 1.2, chekpoint: false},
+	        	         ]
+		        }   
+			]	
+};
+
+function audioSetUp() {
+
+	// REGISTER CHORDS
+	for(var i=0; i<audio_track.info.preload.length; i++)
+		registerChord(audio_track.info.preload[i]);
+
+	// CALCULATE PHYSICAL TRACK DISTANCE
+	physical_track.length = audio_track.info.trackLength * (audio_track.noteDurations[audio_track.noteDurations.length -1]) * SHIP_SPEED;
+	
+};
+
 // initialization
 function init() {
 
-	// SOUND
-	addSound("audio_files/", "Sky.wav");	
+	// SET UP AUDIO
+	audioSetUp();
 	
 	// SCENE
 	scene = new THREE.Scene();
@@ -44,7 +101,7 @@ function init() {
 	parent.position.set(0,0,shipStartPosition);
 	scene.add( parent );
 	
-	cameraShip = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.01, 100000 );
+	cameraShip = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.01, 1000000 );
 
 	target = new Target();
 
@@ -118,6 +175,7 @@ function createSpaceShip() {
 		scene.add(ship);
 		ship.add(object);
 		ship.position.set(0,0,shipStartPosition);
+		ship.vecForward = new THREE.Vector3(0,0,1);
 		
 		// SHIP CONTROLS
 		shipControls = new ObjectControls(ship);
@@ -142,12 +200,26 @@ function onWindowResize() {
 
 }
 
+var currentDurration = 0;
+var pos = 0;
+
 function animate() {
 	var delta = clock.getDelta();
 	shipControls.update(delta);
 	//camera.updateCamera();
 	requestAnimationFrame( animate );
-
+	
+	// check if next chord should be played
+	if(currentDurration <= 0) {
+		currentDurration = audio_track.sections[0].chords[pos].duration;
+		playChord(audio_track.sections[0].chords[pos].name, currentDurration);
+		pos++;
+		if(pos == audio_track.sections[0].chords.length)
+			pos = 0;
+	}
+	
+	currentDurration -= delta;
+		
 	render();
 }
 
@@ -158,7 +230,7 @@ function render() {
 	var t = ( time % looptime ) / looptime;
 
 	var pos = tube.parameters.path.getPointAt( t );
-	
+
 	// interpolation
 	var segments = tube.tangents.length;
 	var pickt = t * segments;
@@ -196,6 +268,11 @@ function render() {
 	ship.matrix.lookAt(ship.position, lookAt, target.normal);
 	ship.rotation.setFromRotationMatrix( ship.matrix, ship.rotation.order );
 	
+	// rotate ship
+	/*var angleY = ship.vecForward.angleTo(lookAt);
+	ship.rotateY( -2 * angleY );
+	ship.vecForward.copy(lookAt);*/
+	
 	cameraShip.matrix.lookAt(cameraShip.position, lookAt2, target.normal);
 	cameraShip.rotation.setFromRotationMatrix( cameraShip.matrix, cameraShip.rotation.order );
 	
@@ -204,7 +281,18 @@ function render() {
 
 	ship.translateX(shipControls.x_offset);
 	ship.translateY(shipControls.y_offset);
-
+	
+	// display normals
+	/*var normalsGeometry = new THREE.Geometry();
+	var normalDisplay = new THREE.Vector3();
+	normalDisplay.clone(pos).add(normal);
+	normalsGeometry.vertices.push(pos);
+	normalsGeometry.vertices.push(normalDisplay);
+	var line = new THREE.Line(normalsGeometry, material);
+	scene.add(line);
+	*/
+	
 	renderer.render( scene, cameraShip );
+	
 }
 
