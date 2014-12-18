@@ -1,0 +1,23 @@
+@CHARSET "UTF-8";
+
+#trackForm {
+	margin: 100px 160px 200px 160px;
+}
+
+label {
+	margin-left: 50px;
+}
+
+
+.addChordBtn,
+.removeChordBtn {
+	margin-top: 20px;
+}
+
+.addChordBtn {
+	margin-left: 60px;
+}
+
+.removeChordBtn {
+	margin-left: 20px;
+}

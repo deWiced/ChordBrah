@@ -31,8 +31,6 @@ function createTrack(){
 		
 	var randomSpline =  new THREE.SplineCurve3( randomPoints );
 	
-	//
-	
 	var extrudeSettings = {
 		steps			: 400,
 		bevelEnabled	: false,
@@ -66,6 +64,8 @@ function addGeometry( geometry, color ) {
 	scene.add( tubeMesh );
 
 }
+
+
 
 function setScale( scale) {
 
