@@ -24,7 +24,9 @@
 		<br>
 		<button id="sectionBtn">Create a new section</button>
 		<button id="removeSectionBtn" style="margin-left:20px">Remove last section</button>
-		<button id="generateTrackBtn" style="float: right; margin-right: 60px">Generate track</button>
+		<input type="file" id="openFileBtn" enctype="multipart/form-data" style="float: right; margin-right: 20px; width: 180px;"/>
+		<a id="saveTrackBtn" style="float: right; margin-right: 20px" href="" download="">Save track</a>
+		
 		</fieldset>
 	</div>
 	
@@ -60,7 +62,7 @@
 			insertChordHTML += '<select id="duration_'+sectionId+'_'+chordIds[sectionId]+'">' + duration_insert_HTML + '</select>';
 
 			// insert checpoint label and selector
-			insertChordHTML += '<label>Checkpoint: </label><select id="checkpoint_'+sectionId+'_'+chordIds[sectionId]+'"><option>true</option><option>false</option></select></section>';
+			insertChordHTML += '<label>Checkpoint: </label><select id="checkpoint_'+sectionId+'_'+chordIds[sectionId]+'"><option value="true">true</option><option value="false">false</option></select></section>';
 				
 			$(component).before(insertChordHTML);
 			chordIds[sectionId]++;
@@ -124,7 +126,9 @@
 							name: name, // probably ne rabmo
 							root: $("#root_"+i+"_"+j).val(),
 							type: $("#type_"+i+"_"+j).val(),
-							duration: $("#multiplier_"+i+"_"+j).val() * noteDurations[$("#duration_"+i+"_"+j).val()],
+							multiplier:  $("#multiplier_"+i+"_"+j).val(),
+							duration: $("#duration_"+i+"_"+j).val(),
+							time_duration: $("#multiplier_"+i+"_"+j).val() * noteDurations[$("#duration_"+i+"_"+j).val()],
 							checkpoint: $("#checkpoint_"+i+"_"+j).val()
 						});
 
@@ -142,6 +146,7 @@
 						name: $("#nameInput").val(),
 						tempo: $("#tempoInput").val(),
 						timeSigniature: $("#timeSigniatureInput").val(),
+						numBars: $("#lengthInput").val(),
 						length: wholeNoteDuration * $("#lengthInput").val()
 					},
 				preload: preload,
@@ -151,20 +156,81 @@
 
 			console.log(generatedTrack);
 		};
+
+		function saveTrack() {
+			var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(generatedTrack));
+			$("#saveTrackBtn").attr("href", "data:" + data);
+			$("#saveTrackBtn").attr("download", "ChordBrah_"+generatedTrack.info.name+".json");
+		};
+
+		function clearEditor() {
+			var num = sectionId;
+			for(var i=0; i<num; i++) {
+				var id = sectionId - 1;
+				$(".break_"+id).remove();
+				$("#section_"+id).remove();
+				sectionId--;			
+			}
+
+			chordIds = [];
+		}
+		
+		function displayTrack(track) {
+			// Track info
+			$("#nameInput").val(track.info.name);
+			$("#tempoInput").val(track.info.tempo);
+			$("#timeSigniatureInput").val(track.info.timeSigniature);
+			$("#lengthInput").val(track.info.numBars);
+
+			// Track sections
+			for(var i=0; i<track.sections.length; i++) {
+				
+				// Create new section
+				addSection("#sectionBtn");
+
+				// Section info				
+				$("#sectionName_"+i).val(track.sections[i].name);
+				$("#sectionIterations_"+i).val(track.sections[i].iterations);
+			
+				// Create chords
+				for(var j=0; j<track.sections[i].chords.length; j++) {
+
+					// Create new chord
+					addChord($("#addChordBtn_"+i), i);
+					// Do the selections
+					$("#root_"+i+"_"+j).val(track.sections[i].chords[j].root);
+					$("#type_"+i+"_"+j).val(track.sections[i].chords[j].type);
+					$("#multiplier_"+i+"_"+j).val(track.sections[i].chords[j].multiplier);
+					$("#duration_"+i+"_"+j).val(track.sections[i].chords[j].duration);
+					$("#checkpoint_"+i+"_"+j).val(track.sections[i].chords[j].checkpoint);
+				}
+			}
+		};
+
+		function openTrack(evt) {
+			var files = evt.target.files;
+	        var file = files[0];           
+	        var reader = new FileReader();
+	        reader.onload = function() {
+				clearEditor();
+				displayTrack(jQuery.parseJSON(this.result));            
+	        }
+	        reader.readAsText(file)
+		};
 		
  		$(document).ready(function() {
  	 		
  			for(var i=0; i < ROOT_NOTES.length; i++)
- 				root_insert_HTML += '<option>'+ROOT_NOTES[i]+'</option>';
+ 				root_insert_HTML += '<option value="'+ROOT_NOTES[i]+'">'+ROOT_NOTES[i]+'</option>';
 
  			for(var i=0; i < CHORD_TYPES.length; i++)
- 				type_insert_HTML += '<option>'+CHORD_TYPES[i]+'</option>';
+ 				type_insert_HTML += '<option value="'+CHORD_TYPES[i]+'">'+CHORD_TYPES[i]+'</option>';
 
- 			for(var i=0; i < CHORD_DURATION.length; i++)
- 				duration_insert_HTML += '<option>'+CHORD_DURATION[i]+'</option>';
-
- 			for(var i=0; i < CHORD_MULTIPLIERS.length; i++)
- 				multiplier_insert_HTML += '<option>'+CHORD_MULTIPLIERS[i]+'</option>';
+ 			for(var i=0; i < CHORD_DURATION.length; i++)				
+ 				duration_insert_HTML += '<option value="'+CHORD_DURATION[i]+'">'+CHORD_DURATION[i]+'</option>';
+ 				
+ 			for(var i=0; i < CHORD_MULTIPLIERS.length; i++)			
+ 				multiplier_insert_HTML += '<option value="'+CHORD_MULTIPLIERS[i]+'">'+CHORD_MULTIPLIERS[i]+'</option>';
 
 			$("#sectionBtn").click(function() {
 				addSection(this);
@@ -174,9 +240,15 @@
 				removeSection();
 			});
 
-			$("#generateTrackBtn").click(function() {
+			$("#saveTrackBtn").click(function() {
 				generateTrack();
+				saveTrack();
 			});
+
+			document.getElementById('openFileBtn').addEventListener('change', openTrack, false);
+			/*$("#openFileBtn").click(function() ) {
+				openTrack();
+			});*/
 			
  		});
 	</script>
