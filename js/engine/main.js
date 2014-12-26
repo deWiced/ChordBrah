@@ -179,7 +179,9 @@ function createSpaceShip() {
 		
 		// SHIP CONTROLS
 		shipControls = new ObjectControls(ship);
-		shipControls.movementSpeed = 1000;
+		shipControls.movementSpeed = 1800;
+		shipControls.verticalMax = 300;
+		shipControls.horizontalMax = 500;
 		//shipControls.autoForward = true;
 		
 		animate(); 
