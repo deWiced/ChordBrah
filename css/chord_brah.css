@@ -2,9 +2,173 @@
 
 body {
 	 margin: 0; 
-	 overflow: hidden;
 }
 
-canvas {
-	width: 100%; height: 100% 
+#wrapper {
+	position: absolute;
+	top: 100px;
+	left: 300px;
+	width: 800px; 
+	height: 600px; 
+	background: url("../img/wallpaper/plini_1.jpg") no-repeat;
+	background-size: 800px 600px;
+}
+
+#container, #editor, #menu {
+	overflow: auto;
+	width: 100%; 
+	height: 100%; 
+	font-family: 'Love Ya Like A Sister', cursive;
 } 
+
+#logo {
+	position: relative;
+	color: white;
+	float: none;
+	display: block;
+	margin: 180px auto 80px auto;
+	font-size: 54px;
+	text-align: center;
+}
+
+#menu button {
+	border: none;
+	color: white;
+	background: transparent;
+	float: none;
+	width: 20%;
+	height: 8%;
+	font-size: 32px;
+	display: block;
+	text-align: center;
+	margin: 20px auto;
+	font-family: 'Love Ya Like A Sister', cursive;
+}
+
+#menu button:hover {
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+
+
+
+/* Editor style */
+
+#editorNavigation {
+	margin-top: 30px;
+}
+
+#editor_backBtn {
+	margin-left: 28%;
+	border: none;
+	background: transparent;
+	color: white;
+	font-family: 'Love Ya Like A Sister', cursive;
+	font-size: 22px;
+}
+
+#editor_backBtn:hover {
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+#editorNavigation label {
+	margin-left: 10px;
+	color: white;
+	font-family: 'Love Ya Like A Sister', cursive;
+	font-size: 34px;
+}
+
+#trackForm {
+	color: white;
+}
+
+#trackForm fieldset:FIRST-CHILD {
+	margin: 40px 20px 10px 20px;
+}
+
+#trackForm fieldset {
+	margin: 0px 20px 10px 20px;
+	background: rgba(1,1,1,0.2);
+}
+
+#trackForm input[type="text"] {
+	margin-left: 10px;
+	color: white;
+	background: transparent;
+    border:0;
+    border-bottom: 1px solid white;
+    width: 100px;
+}
+
+#trackForm input[type="text"]:FOCUS,
+#trackForm button:FOCUS {
+	outline: 0;
+}
+
+#container {
+	width: 100%; 
+	height: 100%;
+	overflow: hidden;
+}
+
+label {
+	margin-left: 50px;
+	text-align: right;
+	font-size: 14px;
+}
+
+#trackForm button {
+	border: none;
+	color: white;
+	font-family: 'Love Ya Like A Sister', cursive;
+	cursor: pointer;
+	background-color: transparent;
+	font-size: 16px;
+}
+
+#trackForm button:hover,
+#trackForm a:hover {
+	background-color: #e7634b;
+}
+
+#trackForm a, #trackForm a:VISITED {
+	text-decoration: none;
+	color: white;
+	font-size: 16px;
+	padding: 2px 6px 2px 6px;
+}
+
+#openFileBtn {
+	height: 0;
+	width: 0;
+}
+
+#openFileBtn-label {
+	padding-right: 5px;
+	border: none;
+	cursor: pointer;
+	font-size: 16px;	
+	display: inline-block;
+	float: right;
+	margin-right: 20px;
+	width: 40px;
+}
+
+#openFileBtn-label:hover {
+	background-color: #e7634b;
+}
+
+.addChordBtn,
+.removeChordBtn {
+	margin-top: 20px;
+}
+
+.addChordBtn {
+	margin-left: 60px;
+}
+
+.removeChordBtn {
+	margin-left: 20px;
+}

@@ -80,7 +80,7 @@ function audioSetUp() {
 };
 
 // initialization
-function init() {
+function initGame(screenWidth, screenHeight) {
 
 	// SET UP AUDIO
 	audioSetUp();
@@ -101,7 +101,7 @@ function init() {
 	parent.position.set(0,0,shipStartPosition);
 	scene.add( parent );
 	
-	cameraShip = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.01, 1000000 );
+	cameraShip = new THREE.PerspectiveCamera( 75, screenWidth / screenHeight, 0.01, 1000000 );
 
 	target = new Target();
 
@@ -129,7 +129,7 @@ function init() {
 	
 	// RENDERER
 	renderer = new THREE.WebGLRenderer( { antialias: false } );
-	renderer.setSize( window.innerWidth, window.innerHeight );
+	renderer.setSize( screenWidth, screenHeight );
 	container = document.getElementById( 'container' );
 	container.appendChild( renderer.domElement );
 	
@@ -210,17 +210,6 @@ function animate() {
 	shipControls.update(delta);
 	//camera.updateCamera();
 	requestAnimationFrame( animate );
-	
-	// check if next chord should be played
-	if(currentDurration <= 0) {
-		currentDurration = audio_track.sections[0].chords[pos].duration;
-		playChord(audio_track.sections[0].chords[pos].name, currentDurration);
-		pos++;
-		if(pos == audio_track.sections[0].chords.length)
-			pos = 0;
-	}
-	
-	currentDurration -= delta;
 		
 	render();
 }

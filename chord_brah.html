@@ -5,17 +5,19 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<link rel="stylesheet" type="text/css" href="css/chord_brah.css">
+		<link rel="stylesheet" type="text/css" href="css/trackEditorStyle.css">
+		<link href='http://fonts.googleapis.com/css?family=Love+Ya+Like+A+Sister' rel='stylesheet' type='text/css'>
 	</head>
 
-	<body>
-		<div id="container"></div>
-		
+	<body ng-app="ChordBrah">
 		<!-- Third party scripts -->
 		<script src="js/three.js"></script>
 		<script  src="js/MTLLoader.js"></script>
 		<script src="js/OBJMTLLoader.js"></script>
 		<script src="js/soundjs/soundjs-NEXT.combined.js"></script>
 		<script src="js/TrackballControls.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+		<script type="text/javascript" src="http://code.angularjs.org/1.2.4/angular.js"></script>	
 		
 		<!-- Our scripts -->
 		<script src="js/engine/camera.js"></script>
@@ -24,10 +26,45 @@
 		<script src="js/engine/track.js"></script>
 		<script src="js/engine/soundControl.js"></script>
 		<script src="js/engine/target.js"></script>
-
-		<!-- Main -->
-		<script>
-			init();			
-		</script>
+		<script src="js/engine/menuControl.js"></script>
+	
+		<div id="wrapper" ng-controller="menuController">
+			<div id="menu" ng-hide="activeView != 'menuView'">
+				<div id="logo">Chord Brah</div>
+				<button id="editorBtn" ng-click="setEditor()">Editor</button>
+				<button id="helpBtn">Help</button>
+			</div>
+			<div id="editor" ng-hide="activeView != 'editorView'" ng-controller="editorController">
+				<div id="editorNavigation">
+					<button id="editor_backBtn" ng-click="toMenu()">back</button>
+					<label>Track Editor</label>
+				</div>
+				<div id="trackForm">
+					<fieldset> <legend>Track info</legend>
+						<br>
+						<label>Track name: </label><input type="text" id="nameInput" >
+						<label>Track tempo: </label><input type="text" id="tempoInput">
+						<br>
+						<label>Time signiature: </label><input type="text" id="timeSigniatureInput">
+						<label>Number of bars: </label><input type="text" id="lengthInput">
+					</fieldset>
+					
+					<br><br>
+					
+					<fieldset> <legend>Track sections</legend>
+					<br>
+					<button id="sectionBtn" ng-click="addSection()">Create a new section</button>
+					<button id="removeSectionBtn" ng-click="removeSection()" style="margin-left:20px">Remove last section</button>
+					<button id="playBtn" ng-click="play()" style="float: right; margin-right: 20px">Play</button>
+					<input type="file" id="openFileBtn"/>
+					<label id="openFileBtn-label" for="openFileBtn">Open</label>
+					<a id="saveTrackBtn" ng-click="saveTrack()" style="float: right; margin-right: 20px" href="" download="">Save track</a>
+					
+					</fieldset>
+				</div>
+			</div>
+			<div id="container" ng-hide="activeView != 'gameView'"></div>
+		</div>
+		
 	</body>
 </html>
