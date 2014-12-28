@@ -61532,7 +61532,7 @@ function createSkyBox(urlPrefix, type) {
 //create and add space ship
 function createSpaceShip() {
 	var loader = new THREE.OBJMTLLoader();
-	loader.load( 'u/content/128/Feisar_Ship.obj', 'models/FeisarShip/Feisar_Ship.mtl', function ( object ) {
+	loader.load( 'u/content/128/Feisar_Ship.obj', 'u/content/217/Feisar_Ship.mtl', function ( object ) {
 
 		//scene.add( object );
 		ship = new THREE.Object3D();
@@ -61651,6 +61651,77 @@ function render() {
 	renderer.render( scene, cameraShip );
 	
 }
+
+
+/*
+{
+    "id": 144,
+    "name": "Bruh",
+    "difficulty": "HRD",
+    "time_limit": -69,
+    "levels": -7,
+    "retries_available": -17,
+    "lang_code": "en",
+    "resources": [
+	{
+            "id": 0,
+            "machine_name": "ship",
+            "friendly_name": "",
+            "value": "u\/content\/128\/Feisar_Ship.obj",
+            "parent": null
+        },
+	{
+            "id": 1,
+            "machine_name": "plini",
+            "friendly_name": "tat",
+            "value": "u\/content\/127\/plini_1.jpg",
+            "parent": null
+        },
+	{
+            "id": 2,
+            "machine_name": "top",
+            "friendly_name": "",
+            "value": "u\/content\/135\/red_top.jpg",
+            "parent": null
+        },
+	{
+            "id": 3,
+            "machine_name": "bottom",
+            "friendly_name": "",
+            "value": "u\/content\/136\/red_bottom.jpg",
+            "parent": null
+        },
+	{
+            "id": 4,
+            "machine_name": "left",
+            "friendly_name": "",
+            "value": "u\/content\/134\/red_left.jpg",
+            "parent": null
+        },
+	{
+            "id": 5,
+            "machine_name": "right",
+            "friendly_name": "",
+            "value": "u\/content\/137\/red_right.jpg",
+            "parent": null
+        },
+	{
+            "id": 6,
+            "machine_name": "front",
+            "friendly_name": "",
+            "value": "u\/content\/133\/red_front.jpg",
+            "parent": null
+        },
+	{
+            "id": 7,
+            "machine_name": "back",
+            "friendly_name": "",
+            "value": "u\/content\/132\/red_back.jpg",
+            "parent": null
+        }
+    ]
+}
+*/
 
 $(document).ready(
 	function(){
