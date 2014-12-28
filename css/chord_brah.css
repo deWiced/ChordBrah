@@ -103,6 +103,7 @@ body {
 }
 
 #trackForm input[type="text"]:FOCUS,
+#trackForm input[type="file"]:FOCUS,
 #trackForm button:FOCUS {
 	outline: 0;
 }
