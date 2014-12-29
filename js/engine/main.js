@@ -5,7 +5,8 @@
 // constants
 var FOV = 75, NEAR_PLANE = 0.1, FAR_PLANE = 1000;
 
-var scene, camera, controls, renderer, container;
+var scene, camera, controls, renderer, composer, container;
+var glitch = false;
 var skyBox;
 var ship, shipControls;
 var clock = new THREE.Clock();
@@ -68,6 +69,14 @@ var audio_track =
 			]	
 };
 
+// SCREEN COMMANDS
+document.body.addEventListener("keydown", function( event ) {
+	switch (event.keyCode) {
+		case 70: THREEx.FullScreen.request(); break;
+		case 71: glitch = !glitch; setupShaders(); break;
+	}
+}, false);
+
 function audioSetUp() {
 
 	// REGISTER CHORDS
@@ -95,6 +104,8 @@ function initGame(screenWidth, screenHeight) {
 	var sun = new THREE.DirectionalLight( 0xffff7f, 3.0);
 	sun.position.set(100000/2, 100000/2, 100000/2);
 	scene.add( sun );
+
+	//scene.fog = new THREE.Fog( 0x000000, 1, 10000 );
 
 	//add shipTEMP camera
 	parent = new THREE.Object3D();
@@ -133,13 +144,44 @@ function initGame(screenWidth, screenHeight) {
 	container = document.getElementById( 'container' );
 	container.appendChild( renderer.domElement );
 	
+	setupShaders();
+
+	//
+
 	window.addEventListener( 'resize', onWindowResize, false );
+
+}
+
+function setupShaders() {
+
+	// POSTPROCESSING
+	composer = new THREE.EffectComposer( renderer );
+	composer.addPass( new THREE.RenderPass( scene, cameraShip ) );
+
+	//composer.addPass(new THREE.BloomPass( 2.0 ));
+	if (glitch) composer.addPass(new THREE.GlitchPass( ));
+
+	var effectVignette = new THREE.ShaderPass( THREE.VignetteShader );
+	effectVignette.uniforms[ "offset" ].value = 0.95;
+	effectVignette.uniforms[ "darkness" ].value = 1.2;
+	effectVignette.renderToScreen = true;
+	composer.addPass(effectVignette);
+
+	var effect = new THREE.ShaderPass( THREE.DotScreenShader );
+	effect.uniforms[ 'scale' ].value = 4;
+	//composer.addPass( effect );
+
+	var effect = new THREE.ShaderPass( THREE.RGBShiftShader );
+	effect.uniforms[ 'amount' ].value = 0.0015;
+	//effect.renderToScreen = true;
+	//composer.addPass( effect );
+
 }
 
 // create and add sky sphere
 function createSkySphere() {
-	var geometry = new THREE.SphereGeometry(10000, 60, 40);
-	var material = new THREE.MeshBasicMaterial({ map: THREE.ImageUtils.loadTexture('img/skybox/background.jpg') });
+	var geometry = new THREE.SphereGeometry(100000, 60, 40);
+	var material = new THREE.MeshBasicMaterial({ map: THREE.ImageUtils.loadTexture('img/skybox/blue.jpg') });
 
 	skyBox = new THREE.Mesh(geometry, material);
 	skyBox.scale.set(-1, 1, 1);
@@ -284,7 +326,7 @@ function render() {
 	scene.add(line);
 	*/
 	
-	renderer.render( scene, cameraShip );
+	composer.render( scene, cameraShip );
 	
 }
 
