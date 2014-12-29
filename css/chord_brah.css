@@ -12,7 +12,7 @@ body {
 	background-size: cover;
 }
 
-#container, #editor, #menu, #options {
+#container, #editor, #menu, #options, #songSelect {
 	overflow: auto;
 	width: 100%; 
 	height: 100%; 
@@ -190,4 +190,36 @@ label {
 	margin-top: 20px;
 	margin-right: 40px;
 	float: right;
+}
+
+
+/*   Song selection style */
+
+#songSelection {
+	overflow: auto; 
+	font-family: 'Love Ya Like A Sister', cursive;
+	margin-left: 10%;
+	margin-top: 5%;
+	width: 80%;
+	height: 70%;
+}
+
+.song {
+	margin: 20px 30px 20px 30px;
+	float: left;
+	width: 220px;
+	height: 300px;
+	background: url("../img/other/polaroid.png") center no-repeat;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+
+.song label {
+	position: relative;
+	top: 120px;
+	left: 20px;
+	font-size: 32px;
+	color: white;
 }

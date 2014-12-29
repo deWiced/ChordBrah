@@ -11,7 +11,7 @@ function init_screen() {
 	SCREEN_HEIGHT = window.innerHeight;
 	
 	$("#wrapper").width(SCREEN_WIDTH);
-	$("#wrapper").height(SCREEN_HEIGHT)
+	$("#wrapper").height(SCREEN_HEIGHT);
 	
 	$("#widthInput").val(SCREEN_WIDTH);
 	$("#heightInput").val(SCREEN_HEIGHT);
@@ -30,13 +30,35 @@ ChordBrah.controller("menuController", function($rootScope, $scope) {
 	
 	$scope.setOptions = function() {
 		$rootScope.$broadcast("changeView", "optionsView");
+	};
+	
+	$scope.setSongSelect = function() {
+		$rootScope.$broadcast("changeView", "songSelectView");
 	}
+});
+
+ChordBrah.controller("songSelectController", function($rootScope, $scope) {
+	$scope.songs = [];
+	
+	$scope.setFiles = function(element) {
+		for(var i = 0; i < element.files.length; i++) {
+			$scope.$apply(function() {
+				$scope.songs.push(element.files[i].name.split("_")[1]);
+			});
+		}
+		console.log($scope.songs);
+	};
+	
+	$scope.toMenu = function() {
+		$rootScope.$broadcast("changeView", "menuView");
+	};
+	
 });
 
 ChordBrah.controller("optionsController", function($rootScope, $scope) {
 	$scope.toMenu = function() {
 		$rootScope.$broadcast("changeView", "menuView");
-	}
+	};
 	
 	$scope.fullscreen = false;
 	
@@ -48,7 +70,7 @@ ChordBrah.controller("optionsController", function($rootScope, $scope) {
 			width: SCREEN_WIDTH,
 			height : SCREEN_HEIGHT
 		}, 300);
-	}
+	};
 	
 	$scope.toggleFullscreen = function() {
 		$scope.fullscreen = !$scope.fullscreen;
@@ -60,7 +82,7 @@ ChordBrah.controller("optionsController", function($rootScope, $scope) {
 			$("#widthInput").val(SCREEN_WIDTH);
 			$("#heightInput").val(SCREEN_HEIGHT);
 		}
-	}
+	};
 });
 
 ChordBrah.controller("editorController", function($rootScope, $scope, $compile) {
@@ -156,7 +178,6 @@ ChordBrah.controller("editorController", function($rootScope, $scope, $compile) 
 			 	"sixteenth": wholeNoteDuration / 16
 			};	
 
-		var sections = [];
 		for(var i=0; i<$scope.sectionId; i++) {
 			var chords=[];
 			for(var j=0; j<$scope.chordIds[i]; j++) { 
@@ -217,7 +238,7 @@ ChordBrah.controller("editorController", function($rootScope, $scope, $compile) 
 		$("#lengthInput").val("");
 		
 		$scope.chordIds = [];
-	}
+	};
 	
 	$scope.displayTrack = function(track) {
 		// Track info
@@ -260,8 +281,8 @@ ChordBrah.controller("editorController", function($rootScope, $scope, $compile) 
         reader.onload = function() {
         	$scope.clearEditor();
         	$scope.displayTrack(jQuery.parseJSON(this.result));            
-        }
-        reader.readAsText(file)
+        };
+        reader.readAsText(file);
 	};
 	
 	$scope.saveTrack = function() {
@@ -271,14 +292,14 @@ ChordBrah.controller("editorController", function($rootScope, $scope, $compile) 
 	
 	$scope.toMenu = function() {
 		$rootScope.$broadcast("changeView", "menuView");
-	}
+	};
 	
 	$scope.play = function() {
 		// TODO client side validation
 		$scope.generateTrack();
 		initGame($("#wrapper").width(), $("#wrapper").height(), $scope.generatedTrack);
 		$rootScope.$broadcast("changeView", "gameView");		
-	}
+	};
 	
 	
 	document.getElementById('openFileBtn').addEventListener('change', $scope.openTrack, false);
