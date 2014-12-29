@@ -95,7 +95,7 @@ body {
 
 #trackForm input[type="text"] {
 	margin-left: 10px;
-	color: white;
+	color: #e7634b;
 	background: transparent;
     border:0;
     border-bottom: 1px solid white;
@@ -105,7 +105,9 @@ body {
 
 #trackForm input[type="text"]:FOCUS,
 #trackForm input[type="file"]:FOCUS,
-#trackForm button:FOCUS {
+#trackForm button:FOCUS,
+#menu button,
+#trackForm select {
 	outline: 0;
 }
 
@@ -173,4 +175,14 @@ label {
 
 .removeChordBtn {
 	margin-left: 20px;
+}
+
+#trackForm select {
+	background-color: transparent;
+	color: #e7634b;
+	border: none;
+}
+
+#trackForm select::AFTER {
+	border-top-color: white !important;
 }
