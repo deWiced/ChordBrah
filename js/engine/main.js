@@ -62,7 +62,7 @@ function audioSetUp() {
 		}
 	}
 	
-	console.log(audio_track);
+	console.log(chord_sequence);
 };
 
 // initialization

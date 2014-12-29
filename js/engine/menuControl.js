@@ -1,15 +1,66 @@
 charset="UTF-8";
 
+var SCREEN_WIDTH;
+var SCREEN_HEIGTH;
+
+function init_screen() {
+	//SCREEN_WIDTH = 800;
+	//SCREEN_HEIGHT = 600;
+	
+	SCREEN_WIDTH = window.innerWidth;
+	SCREEN_HEIGHT = window.innerHeight;
+	
+	$("#wrapper").width(SCREEN_WIDTH);
+	$("#wrapper").height(SCREEN_HEIGHT)
+	
+	$("#widthInput").val(SCREEN_WIDTH);
+	$("#heightInput").val(SCREEN_HEIGHT);
+}
+
 var ChordBrah = angular.module("ChordBrah", []);
 
 ChordBrah.controller("menuController", function($rootScope, $scope) {
 	$scope.activeView = "menuView";
 	
 	$rootScope.$on("changeView", function(event, view) {$scope.activeView = view;});
+	
 	$scope.setEditor = function() {
 		$rootScope.$broadcast("changeView", "editorView");
 	};	
 	
+	$scope.setOptions = function() {
+		$rootScope.$broadcast("changeView", "optionsView");
+	}
+});
+
+ChordBrah.controller("optionsController", function($rootScope, $scope) {
+	$scope.toMenu = function() {
+		$rootScope.$broadcast("changeView", "menuView");
+	}
+	
+	$scope.fullscreen = false;
+	
+	$scope.applyOptions = function() {
+		SCREEN_WIDTH = $("#widthInput").val();
+		SCREEN_HEIGHT = $("#heightInput").val();
+		
+		$("#wrapper").animate({
+			width: SCREEN_WIDTH,
+			height : SCREEN_HEIGHT
+		}, 300);
+	}
+	
+	$scope.toggleFullscreen = function() {
+		$scope.fullscreen = !$scope.fullscreen;
+		if($scope.fullscreen) {
+			$("#widthInput").val(window.innerWidth);
+			$("#heightInput").val(window.innerHeight);
+		}
+		else {
+			$("#widthInput").val(SCREEN_WIDTH);
+			$("#heightInput").val(SCREEN_HEIGHT);
+		}
+	}
 });
 
 ChordBrah.controller("editorController", function($rootScope, $scope, $compile) {
@@ -234,3 +285,8 @@ ChordBrah.controller("editorController", function($rootScope, $scope, $compile) 
 
 	$scope.clearEditor();
 });
+
+$(document).ready(function() {
+	init_screen();
+});
+

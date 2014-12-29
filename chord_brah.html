@@ -50,15 +50,32 @@
 			<div id="menu" ng-hide="activeView != 'menuView'">
 				<div id="logo">Chord Brah</div>
 				<button id="editorBtn" ng-click="setEditor()">Editor</button>
+				<button id="optionsBtn" ng-click="setOptions()">Options</button>
 				<button id="helpBtn">Help</button>
 			</div>
+			<div id="options" ng-hide="activeView != 'optionsView'" ng-controller="optionsController">
+				<div class="navigation">
+					<button id="options_backBtn" ng-click="toMenu()">back</button>
+					<label>Options</label>
+				</div>
+				<div id="optionsForm" class="cord_brah_form">
+					<fieldset><legend>Screen size</legend>
+						<br>
+						<label>Screen width: </label><input type="text" id="widthInput" >
+						<label>Screen height: </label><input type="text" id="heightInput">
+						<label>Fullscreen: </label><input type="checkbox" id="fullScreenChk" ng-model="fullscr" ng-change="toggleFullscreen()">
+						<br>
+						<button id="optionsApplyBtn" ng-click="applyOptions()">Apply</button>
+					</fieldset>
+				</div>
+			</div>
 			<div id="editor" ng-hide="activeView != 'editorView'" ng-controller="editorController">
-				<div id="editorNavigation">
+				<div class="navigation">
 					<button id="editor_backBtn" ng-click="toMenu()">back</button>
 					<label>Track Editor</label>
 				</div>
-				<div id="trackForm">
-					<fieldset> <legend>Track info</legend>
+				<div id="trackForm" class="cord_brah_form">
+					<fieldset><legend>Track info</legend>
 						<br>
 						<label>Track name: </label><input type="text" id="nameInput" >
 						<label>Track tempo: </label><input type="text" id="tempoInput">
