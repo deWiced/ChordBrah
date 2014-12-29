@@ -18,6 +18,7 @@ var binormal = new THREE.Vector3();
 var normal = new THREE.Vector3();
 var scale = 1;
 var targetRotation = 0;
+var gameRenderWidth, gameRenderHeight;
 
 var parent, cameraShip;
 
@@ -33,41 +34,7 @@ var physical_track =
 		length: 0,
 		checkpoints: []
 };
-var audio_track = 
-	{
-		info:
-			{
-				trackName: "Test",
-				trackLength: 16 * 6, // TODO Kako najbol predstavt track length
-				timeSigniature: "4/4",
-				tempo: 100,
-				preload: [ "E-major", "C-major", "G-major" ]
-			},
-		noteDurations:
-			{
-				"full": 240 / 100,
-				"half": 120 / 100,
-				"quater": 60 / 100,
-				"eighth": 30 / 100,
-				"sixteenth": 15 / 100
-			},
-		sections: 
-			[
-		        {
-		        	name: "intro",
-		        	repeate: 2,
-		        	chords: 
-		        		[
-		        	         {name: "E-major", duration: 1.2, chekpoint: false},
-		        	         {name: "C-major", duration: 1.2, chekpoint: false},
-		        	         {name: "E-major", duration: 1.2, chekpoint: false},
-		        	         {name: "C-major", duration: 1.2, chekpoint: false},
-		        	         {name: "G-major", duration: 1.2, chekpoint: false},
-		        	         {name: "E-major", duration: 1.2, chekpoint: false},
-	        	         ]
-		        }   
-			]	
-};
+var audioTrack;
 
 // SCREEN COMMANDS
 document.body.addEventListener("keydown", function( event ) {
@@ -80,18 +47,33 @@ document.body.addEventListener("keydown", function( event ) {
 function audioSetUp() {
 
 	// REGISTER CHORDS
-	for(var i=0; i<audio_track.info.preload.length; i++)
-		registerChord(audio_track.info.preload[i]);
+	for(var i=0; i<audio_track.preload.length; i++)
+		registerChord(audio_track.preload[i]);
 
 	// CALCULATE PHYSICAL TRACK DISTANCE
-	physical_track.length = audio_track.info.trackLength * (audio_track.noteDurations[audio_track.noteDurations.length -1]) * SHIP_SPEED;
+	physical_track.length = audio_track.info.trackLength  * SHIP_SPEED;
 	
+	// CREATE A LIST OF ALL CHORDS
+	for(var i=0; i<audio_track.sections.length; i++) {
+		for(var k=0; k<audio_track.sections[i].iterations; k++) {
+			for(var j=0; j<audio_track.sections[i].chords.length; j++) {
+				chord_sequence.push(audio_track.sections[i].chords[j]);
+			}
+		}
+	}
+	
+	console.log(audio_track);
 };
 
 // initialization
-function initGame(screenWidth, screenHeight) {
+function initGame(screenWidth, screenHeight, generatedTrack) {
 
+	// SET UP SCREEN SIZE
+	gameRenderWidth = screenWidth;
+	gameRenderHeight = screenHeight;
+	
 	// SET UP AUDIO
+	audio_track = generatedTrack;
 	audioSetUp();
 	
 	// SCENE
@@ -112,7 +94,7 @@ function initGame(screenWidth, screenHeight) {
 	parent.position.set(0,0,shipStartPosition);
 	scene.add( parent );
 	
-	cameraShip = new THREE.PerspectiveCamera( 75, screenWidth / screenHeight, 0.01, 1000000 );
+	cameraShip = new THREE.PerspectiveCamera( 75, gameRenderWidth / gameRenderHeight, 0.01, 1000000 );
 
 	target = new Target();
 
@@ -140,7 +122,7 @@ function initGame(screenWidth, screenHeight) {
 	
 	// RENDERER
 	renderer = new THREE.WebGLRenderer( { antialias: false } );
-	renderer.setSize( screenWidth, screenHeight );
+	renderer.setSize( gameRenderWidth, gameRenderHeight );
 	container = document.getElementById( 'container' );
 	container.appendChild( renderer.domElement );
 	
@@ -235,10 +217,10 @@ function onWindowResize() {
 	//camera.camera.aspect = window.innerWidth / window.innerHeight;
 	//camera.camera.updateProjectionMatrix();
 	
-	cameraShip.aspect = window.innerWidth / window.innerHeight;
+	cameraShip.aspect = gameRenderWidth / gameRenderHeight;
 	cameraShip.updateProjectionMatrix();
 
-	renderer.setSize( window.innerWidth, window.innerHeight );
+	renderer.setSize( gameRenderWidth, gameRenderHeight );
 
 	render();
 
@@ -252,7 +234,19 @@ function animate() {
 	shipControls.update(delta);
 	//camera.updateCamera();
 	requestAnimationFrame( animate );
-		
+	
+	// Play current chord
+	if(currentDurration <= 0) {
+		if(pos < chord_sequence.length) {
+			playChord(chord_sequence[pos].name, chord_sequence[pos].time_duration);
+			currentDurration = chord_sequence[pos].time_duration;
+			pos++; // DO WE WANT TO LOOP
+		}
+	}
+	else {
+		currentDurration -= delta;
+	}
+	
 	render();
 }
 
@@ -327,6 +321,7 @@ function render() {
 	*/
 	
 	composer.render( scene, cameraShip );
+	//renderer.render(scene, cameraShip);
 	
 }
 

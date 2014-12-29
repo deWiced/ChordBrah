@@ -18,26 +18,22 @@ ChordBrah.controller("editorController", function($rootScope, $scope, $compile) 
 	$scope.sectionId = 0;
 	$scope.chordIds = [];
 	
-	$scope.ROOT_NOTES = ["C", "E", "G"]; // read from file
 	$scope.root_insert_HTML = "";
-	for(var i=0; i < $scope.ROOT_NOTES.length; i++)
-		$scope.root_insert_HTML += '<option value="'+$scope.ROOT_NOTES[i]+'">'+$scope.ROOT_NOTES[i]+'</option>';
+	for(var key in ROOT_NOTES)
+		$scope.root_insert_HTML += '<option value="'+key+'">'+key+'</option>';
 	
-	$scope.CHORD_TYPES = ["major", "minor", "maj7"]; // read from file
 	$scope.type_insert_HTML = "";
-	for(var i=0; i < $scope.CHORD_TYPES.length; i++)
-		$scope.type_insert_HTML += '<option value="'+$scope.CHORD_TYPES[i]+'">'+$scope.CHORD_TYPES[i]+'</option>';
+	for(var key in CHORD_TYPES)
+		$scope.type_insert_HTML += '<option value="'+key+'">'+key+'</option>';
 	
-	$scope.CHORD_DURATION = ["whole", "half", "quater", "eigth", "sixteenth"]; // read from file
 	$scope.duration_insert_HTML = "";
-	for(var i=0; i < $scope.CHORD_DURATION.length; i++)				
-		$scope.duration_insert_HTML += '<option value="'+$scope.CHORD_DURATION[i]+'">'+$scope.CHORD_DURATION[i]+'</option>';
+	for(var i=0; i < CHORD_DURATION.length; i++)				
+		$scope.duration_insert_HTML += '<option value="'+CHORD_DURATION[i]+'">'+CHORD_DURATION[i]+'</option>';
 	
-	$scope.CHORD_MULTIPLIERS = [1,2,3,4,5,6,7,8,9,10];
 	$scope.multiplier_insert_HTML = "";
-	for(var i=0; i < $scope.CHORD_MULTIPLIERS.length; i++)			
-		$scope.multiplier_insert_HTML += '<option value="'+$scope.CHORD_MULTIPLIERS[i]+'">'+$scope.CHORD_MULTIPLIERS[i]+'</option>';
-
+	for(var i=0; i < CHORD_MULTIPLIERS.length; i++)			
+		$scope.multiplier_insert_HTML += '<option value="'+CHORD_MULTIPLIERS[i]+'">'+CHORD_MULTIPLIERS[i]+'</option>';
+	
 	$scope.addChord = function(sectionId) {
 		// insert root label and selector
 		var insertChordHTML = '<section id="chordSection_'+sectionId+'_'+$scope.chordIds[sectionId]+'"><label>Root note: </label><select id="root_'+sectionId+'_'+$scope.chordIds[sectionId]+'">';
@@ -147,7 +143,6 @@ ChordBrah.controller("editorController", function($rootScope, $scope, $compile) 
 			sections: sections	
 		};
 
-		console.log($scope.generatedTrack);
 	};
 
 	$scope.downloadTrack = function() {
@@ -165,6 +160,11 @@ ChordBrah.controller("editorController", function($rootScope, $scope, $compile) 
 			$scope.sectionId--;			
 		}
 
+		$("#nameInput").val("");
+		$("#tempoInput").val("");
+		$("#timeSigniatureInput").val("");
+		$("#lengthInput").val("");
+		
 		$scope.chordIds = [];
 	}
 	
@@ -198,6 +198,8 @@ ChordBrah.controller("editorController", function($rootScope, $scope, $compile) 
 				$("#checkpoint_"+i+"_"+j).val(track.sections[i].chords[j].checkpoint);
 			}
 		}
+		
+		$scope.generatedTrack = track;
 	};
 
 	$scope.openTrack = function(evt){
@@ -221,12 +223,14 @@ ChordBrah.controller("editorController", function($rootScope, $scope, $compile) 
 	}
 	
 	$scope.play = function() {
-		$rootScope.$broadcast("changeView", "gameView");
-		//initGame($("#container").width(), $("#container").height());
-		initGame(800,600);
+		// TODO client side validation
+		$scope.generateTrack();
+		initGame($("#wrapper").width(), $("#wrapper").height(), $scope.generatedTrack);
+		$rootScope.$broadcast("changeView", "gameView");		
 	}
 	
 	
 	document.getElementById('openFileBtn').addEventListener('change', $scope.openTrack, false);
 
+	$scope.clearEditor();
 });
