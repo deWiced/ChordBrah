@@ -151,7 +151,7 @@ ChordBrah.controller("editorController", function($rootScope, $scope, $compile) 
 			{
 				"whole": wholeNoteDuration,
 				"half": wholeNoteDuration / 2,
-				"quater": wholeNoteDuration / 4,
+				"quarter": wholeNoteDuration / 4,
 			 	"eigth": wholeNoteDuration / 8,
 			 	"sixteenth": wholeNoteDuration / 16
 			};	
