@@ -5,16 +5,14 @@ body {
 }
 
 #wrapper {
-	position: absolute;
-	top: 100px;
-	left: 300px;
-	width: 800px; 
-	height: 600px; 
-	background: url("../img/wallpaper/plini_1.jpg") no-repeat;
-	background-size: 800px 600px;
+	background: url("../img/wallpaper/option_2.jpg");
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
 }
 
-#container, #editor, #menu {
+#container, #editor, #menu, #options {
 	overflow: auto;
 	width: 100%; 
 	height: 100%; 
@@ -55,11 +53,11 @@ body {
 
 /* Editor style */
 
-#editorNavigation {
+.navigation {
 	margin-top: 30px;
 }
 
-#editor_backBtn {
+.navigation button {
 	margin-left: 28%;
 	border: none;
 	background: transparent;
@@ -68,32 +66,32 @@ body {
 	font-size: 22px;
 }
 
-#editor_backBtn:hover {
+.navigation button:hover {
 	text-decoration: underline;
 	cursor: pointer;
 }
 
-#editorNavigation label {
+.navigation  label {
 	margin-left: 10px;
 	color: white;
 	font-family: 'Love Ya Like A Sister', cursive;
 	font-size: 34px;
 }
 
-#trackForm {
+.cord_brah_form {
 	color: white;
 }
 
-#trackForm fieldset:FIRST-CHILD {
+.cord_brah_form fieldset:FIRST-CHILD {
 	margin: 40px 20px 10px 20px;
 }
 
-#trackForm fieldset {
+.cord_brah_form fieldset {
 	margin: 0px 20px 10px 20px;
 	background: rgba(1,1,1,0.2);
 }
 
-#trackForm input[type="text"] {
+.cord_brah_form input[type="text"] {
 	margin-left: 10px;
 	color: #e7634b;
 	background: transparent;
@@ -103,11 +101,12 @@ body {
     text-align: center;
 }
 
-#trackForm input[type="text"]:FOCUS,
-#trackForm input[type="file"]:FOCUS,
-#trackForm button:FOCUS,
+.cord_brah_form input[type="text"]:FOCUS,
+.cord_brah_form input[type="file"]:FOCUS,
+.cord_brah_form button:FOCUS,
 #menu button,
-#trackForm select {
+.navigation button, 
+.cord_brah_form select {
 	outline: 0;
 }
 
@@ -123,7 +122,7 @@ label {
 	font-size: 14px;
 }
 
-#trackForm button {
+.cord_brah_form button {
 	border: none;
 	color: white;
 	font-family: 'Love Ya Like A Sister', cursive;
@@ -132,12 +131,12 @@ label {
 	font-size: 16px;
 }
 
-#trackForm button:hover,
-#trackForm a:hover {
+.cord_brah_form button:hover,
+.cord_brah_form a:hover {
 	background-color: #e7634b;
 }
 
-#trackForm a, #trackForm a:VISITED {
+.cord_brah_form a, .cord_brah_form a:VISITED {
 	text-decoration: none;
 	color: white;
 	font-size: 16px;
@@ -177,12 +176,18 @@ label {
 	margin-left: 20px;
 }
 
-#trackForm select {
+.cord_brah_form select {
 	background-color: transparent;
 	color: #e7634b;
 	border: none;
 }
 
-#trackForm select::AFTER {
+.cord_brah_form select::AFTER {
 	border-top-color: white !important;
+}
+
+#optionsApplyBtn {
+	margin-top: 20px;
+	margin-right: 40px;
+	float: right;
 }
