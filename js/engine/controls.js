@@ -70,16 +70,16 @@ ObjectControls = function ( object, domElement ) {
 		switch ( event.keyCode ) {
 
 			case 38: /*up*/
-			case 87: /*W*/ this.moveForward = movement.FORWARD; break;
+			case 87: /*W*/ this.moveForward = movement.FORWARD; orientation = "up"; break;
 
 			case 37: /*left*/
-			case 65: /*A*/ this.moveLeft = movement.FORWARD; break;
+			case 65: /*A*/ this.moveLeft = movement.FORWARD; orientation = "left"; break;
 
 			case 40: /*down*/
-			case 83: /*S*/ this.moveBackward = movement.FORWARD; break;
+			case 83: /*S*/ this.moveBackward = movement.FORWARD; orientation = "down"; break;
 
 			case 39: /*right*/
-			case 68: /*D*/ this.moveRight = movement.FORWARD; break;
+			case 68: /*D*/ this.moveRight = movement.FORWARD; orientation = "right"; break;
 
 			//case 82: /*R*/ this.moveUp = true; break;
 			//case 70: /*F*/ this.moveDown = true; break;
@@ -93,16 +93,16 @@ ObjectControls = function ( object, domElement ) {
 		switch( event.keyCode ) {
 
 			case 38: /*up*/
-			case 87: /*W*/ this.moveForward = movement.REWIND; break;
+			case 87: /*W*/ this.moveForward = movement.REWIND; orientation = null; break;
 
 			case 37: /*left*/
-			case 65: /*A*/ this.moveLeft = movement.REWIND; break;
+			case 65: /*A*/ this.moveLeft = movement.REWIND; orientation = null; break;
 
 			case 40: /*down*/
-			case 83: /*S*/ this.moveBackward = movement.REWIND; break;
+			case 83: /*S*/ this.moveBackward = movement.REWIND; orientation = null; break;
 
 			case 39: /*right*/
-			case 68: /*D*/ this.moveRight = movement.REWIND; break;
+			case 68: /*D*/ this.moveRight = movement.REWIND; orientation = null; break;
 
 		}
 

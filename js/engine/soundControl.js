@@ -73,6 +73,7 @@ var note_dir = "audio_files/chord_base/";
 var note_type = ".ogg";
 
 var registered_chords = {};
+var chord_instances = {};
 
 function registerChord(chordName){
 	
@@ -95,9 +96,29 @@ var chord_sequence = [];
 function playChord(chordName, duration) {
 	duration *= 1000;
 	var chord = registered_chords[chordName];
-	for(var i=0; i<chord.length; i++) 
-		createjs.Sound.play(chord[i], {startTime: 0, duration: duration});
+	for(var i=0; i<chord.length; i++) {
+		if(!(chordName in chord_instances))
+			chord_instances[chordName+"_"+i] = createjs.Sound.play(chord[i], {startTime: 0, duration: duration});
 		//createjs.Sound.play(chord[i], {interrupt:createjs.Sound.INTERRUPT_NONE, loop:0, volume:1.0});
+		else
+			chord_instances[chordName+"_"+i].play( {startTime: 0, duration: duration});
+	}
+}
+
+function pauseChord(chordName) {
+	if(chordName == null)
+		return;
+	var chord = registered_chords[chordName];
+	for(var i=0; i<chord.length; i++)
+		chord_instances[chordName+"_"+i].pause();
+}
+
+function resumeChord(chordName) {
+	if(chordName == null)
+		return;
+	var chord = registered_chords[chordName];
+	for(var i=0; i<chord.length; i++)
+		chord_instances[chordName+"_"+i].resume();
 }
 
 function stopChord(chordName) {

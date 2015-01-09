@@ -9,8 +9,8 @@ var scene, camera, controls, renderer, composer, container;
 var glitch = false;
 var skyBox;
 var ship, shipControls;
-var clock = new THREE.Clock();
-var shipStartPosition = -9000;
+var clock = new THREE.Clock(false);
+var shipStartPosition = -9600;
 var track;
 var tubeMesh;
 var tube; 
@@ -29,16 +29,31 @@ var material = new THREE.LineBasicMaterial({
 });
 
 var SHIP_SPEED = 100;
+var SPEED_MODIFIER = 40;
+var ship_traveled = 0;
 var physical_track = 
 	{
 		length: 0,
 		checkpoints: []
 };
-var audioTrack;
+
+var isPause = true;
+var currentChord = null;
 
 // SCREEN COMMANDS
 document.body.addEventListener("keydown", function( event ) {
 	switch (event.keyCode) {
+	    case 32: isPause = !isPause; 
+	    		 if(!isPause) {
+	    			 clock.start();
+	    			 requestAnimationFrame( animate );
+	    			 resumeChord(currentChord);
+	    		 }
+	    		 else {
+	    			 clock.stop();
+	    			 pauseChord(currentChord);
+	    		 }
+	    		 break;
 		case 70: THREEx.FullScreen.request(); break;
 		case 71: glitch = !glitch; setupShaders(); break;
 	}
@@ -51,30 +66,46 @@ function audioSetUp() {
 		registerChord(audio_track.preload[i]);
 
 	// CALCULATE PHYSICAL TRACK DISTANCE
-	physical_track.length = audio_track.info.trackLength  * SHIP_SPEED;
+	physical_track.length = parseFloat(audio_track.info.trackLength)  * SHIP_SPEED * SPEED_MODIFIER;
 	
 	// CREATE A LIST OF ALL CHORDS
+	var trackPercent = 0;
 	for(var i=0; i<audio_track.sections.length; i++) {
 		for(var k=0; k<audio_track.sections[i].iterations; k++) {
 			for(var j=0; j<audio_track.sections[i].chords.length; j++) {
-				chord_sequence.push(audio_track.sections[i].chords[j]);
+				var temp_chord = audio_track.sections[i].chords[j];
+				chord_sequence.push(temp_chord);
+				if(temp_chord.checkpoint) {
+					
+					var startP = (trackPercent + parseFloat(temp_chord.checkpoint_offset_time)) * SHIP_SPEED * SPEED_MODIFIER;
+					if(startP >= tube.parameters.path.getLength())
+						startP -= tube.parameters.path.getLength();
+					startP /= tube.parameters.path.getLength();
+					startP = tube.parameters.path.getPointAt(startP);
+	
+					var endP = (trackPercent + parseFloat(temp_chord.checkpoint_offset_time) + parseFloat(temp_chord.checkpoint_duration_time)) * SHIP_SPEED * SPEED_MODIFIER;		
+					if(endP >= tube.parameters.path.getLength())
+						endP -= tube.parameters.path.getLength();
+					endP /= tube.parameters.path.getLength();
+					endP = tube.parameters.path.getPointAt(endP);
+					
+					physical_track.checkpoints.push({ start: startP, end: endP, value: temp_chord.name });
+				}
+				
+				trackPercent += parseFloat(temp_chord.time_duration);
+
 			}
 		}
 	}
-	
-	console.log(chord_sequence);
 };
 
 // initialization
 function initGame(screenWidth, screenHeight, generatedTrack) {
-
+	clock.start();
+	
 	// SET UP SCREEN SIZE
 	gameRenderWidth = screenWidth;
 	gameRenderHeight = screenHeight;
-	
-	// SET UP AUDIO
-	audio_track = generatedTrack;
-	audioSetUp();
 	
 	// SCENE
 	scene = new THREE.Scene();
@@ -87,8 +118,6 @@ function initGame(screenWidth, screenHeight, generatedTrack) {
 	sun.position.set(100000/2, 100000/2, 100000/2);
 	scene.add( sun );
 
-	//scene.fog = new THREE.Fog( 0x000000, 1, 10000 );
-
 	//add shipTEMP camera
 	parent = new THREE.Object3D();
 	parent.position.set(0,0,shipStartPosition);
@@ -98,24 +127,17 @@ function initGame(screenWidth, screenHeight, generatedTrack) {
 
 	target = new Target();
 
-	/*
-	camera = new Camera({
-			fov: 75,
-			aspect_ratio: window.innerWidth / window.innerHeight,
-			near_plane: 0.1,
-			far_plane: 100000,
-			position: new THREE.Vector3(0, 200, -500),
-			up: new THREE.Vector3(0, 1, 0),
-			dir: new THREE.Vector3(0, -1, 1),
-			camera_target: target
-		});
-	*/
 	// SKYBOX
 	//createSkySphere();
 	createSkyBox("img/skybox/red/red_", ".jpg");
 	
 	// ADD TRACK
 	createTrack();
+	
+	// SET UP AUDIO
+	audio_track = generatedTrack;
+	audioSetUp();
+	add_n_chekpoints(0, 6);
 	
 	// SPACESHIP
 	createSpaceShip();
@@ -128,9 +150,8 @@ function initGame(screenWidth, screenHeight, generatedTrack) {
 	
 	setupShaders();
 
-	//
-
 	window.addEventListener( 'resize', onWindowResize, false );
+
 
 }
 
@@ -226,45 +247,82 @@ function onWindowResize() {
 
 }
 
+function add_n_chekpoints(start, n) {
+	for(var i = start; i < n && i < physical_track.checkpoints.length; i++) {
+		addCheckpoint(physical_track.checkpoints[i].start, physical_track.checkpoints[i].end);
+	}
+}
+
 var currentDurration = 0;
 var pos = 0;
 
 function animate() {
-	var delta = clock.getDelta();
-	shipControls.update(delta);
-	//camera.updateCamera();
-	requestAnimationFrame( animate );
-	
-	// Play current chord
-	if(currentDurration <= 0) {
-		if(pos < chord_sequence.length) {
-			playChord(chord_sequence[pos].name, chord_sequence[pos].time_duration);
-			currentDurration = chord_sequence[pos].time_duration;
-			pos++; // DO WE WANT TO LOOP
+	if(!isPause) {
+		var delta = clock.getDelta();
+		shipControls.update(delta);
+		//camera.updateCamera();
+		
+		// Play current chord
+		if(currentDurration <= 0) {
+			if(pos < chord_sequence.length) {
+				currentChord = chord_sequence[pos].name;
+				playChord(currentChord, chord_sequence[pos].time_duration);
+				currentDurration = chord_sequence[pos].time_duration;
+				pos++; // DO WE WANT TO LOOP
+				
+			}
 		}
-	}
-	else {
-		currentDurration -= delta;
+		else {
+			currentDurration -= delta;
+		}
+
+		render(delta);
 	}
 	
-	render();
+	requestAnimationFrame( animate );
 }
 
-// render loop 
-function render() {
-	var time = Date.now();
-	var looptime = 25 * 1000;
-	var t = ( time % looptime ) / looptime;
+var colorIndex = 48;
+var currentPick = 0;
+var pick;
+var isMoved = false;
+var orientation = null;
 
-	var pos = tube.parameters.path.getPointAt( t );
-	//pos = tube.parameters.path.getPoint(0.5);
+// render loop 
+function render(delta_t) {
+	
+	var delta_s = SHIP_SPEED * delta_t * SPEED_MODIFIER;
+	ship_traveled += delta_s;
+	if(ship_traveled > tube.parameters.path.getLength())
+		ship_traveled = 0;
+
+	var t = ship_traveled / tube.parameters.path.getLength();
+	var pos = tube.parameters.path.getPointAt(t);
 
 	// interpolation
 	var segments = tube.tangents.length;
 	var pickt = t * segments;
-	var pick = Math.floor( pickt );
+	pick = Math.floor( pickt );
 	var pickNext = ( pick + 1 ) % segments;
+	
+	// draw checkpoint
+	
+	if(pick != currentPick) {
 
+		if(orientation != null)
+			markTrack(orientation);
+		else
+			clearMark();
+		
+		colorIndex += 16;
+		if(colorIndex == materials.length) {
+			colorIndex = 0; // treba spedenat
+
+		}
+		
+		currentPick = pick;
+	}
+	
 	binormal.subVectors( tube.binormals[ pickNext ], tube.binormals[ pick ] );
 	binormal.multiplyScalar( pickt - pick ).add( tube.binormals[ pick ] );
 
@@ -295,12 +353,7 @@ function render() {
 	
 	ship.matrix.lookAt(ship.position, lookAt, target.normal);
 	ship.rotation.setFromRotationMatrix( ship.matrix, ship.rotation.order );
-	
-	// rotate ship
-	/*var angleY = ship.vecForward.angleTo(lookAt);
-	ship.rotateY( -2 * angleY );
-	ship.vecForward.copy(lookAt);*/
-	
+		
 	cameraShip.matrix.lookAt(cameraShip.position, lookAt2, target.normal);
 	cameraShip.rotation.setFromRotationMatrix( cameraShip.matrix, cameraShip.rotation.order );
 	
@@ -310,18 +363,7 @@ function render() {
 	ship.translateX(shipControls.x_offset);
 	ship.translateY(shipControls.y_offset);
 	
-	// display normals
-	/*var normalsGeometry = new THREE.Geometry();
-	var normalDisplay = new THREE.Vector3();
-	normalDisplay.clone(pos).add(normal);
-	normalsGeometry.vertices.push(pos);
-	normalsGeometry.vertices.push(normalDisplay);
-	var line = new THREE.Line(normalsGeometry, material);
-	scene.add(line);
-	*/
-	
 	composer.render( scene, cameraShip );
-	//renderer.render(scene, cameraShip);
-	
+
 }
 

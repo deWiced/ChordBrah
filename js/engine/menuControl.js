@@ -107,6 +107,9 @@ ChordBrah.controller("editorController", function($rootScope, $scope, $compile) 
 	for(var i=0; i < CHORD_MULTIPLIERS.length; i++)			
 		$scope.multiplier_insert_HTML += '<option value="'+CHORD_MULTIPLIERS[i]+'">'+CHORD_MULTIPLIERS[i]+'</option>';
 	
+	for(var i=0.1; i <=4.1; i+=0.1)
+		$scope.checkpoint_duration_HTML += '<option value="'+i.toFixed(1)+'">'+i.toFixed(1)+'</option>';
+	
 	$scope.addChord = function(sectionId) {
 		// insert root label and selector
 		var insertChordHTML = '<section id="chordSection_'+sectionId+'_'+$scope.chordIds[sectionId]+'"><label>Root note: </label><select id="root_'+sectionId+'_'+$scope.chordIds[sectionId]+'">';
@@ -121,9 +124,17 @@ ChordBrah.controller("editorController", function($rootScope, $scope, $compile) 
 		insertChordHTML += '<select id="multiplier_'+sectionId+'_'+$scope.chordIds[sectionId]+'">' + $scope.multiplier_insert_HTML + '</select>';
 		insertChordHTML += '<select id="duration_'+sectionId+'_'+$scope.chordIds[sectionId]+'">' + $scope.duration_insert_HTML + '</select>';
 
-		// insert checpoint label and selector
-		insertChordHTML += '<label>Checkpoint: </label><select id="checkpoint_'+sectionId+'_'+$scope.chordIds[sectionId]+'"><option value="true">true</option><option value="false">false</option></select></section>';
-			
+		// insert checkpoint label and selector
+		insertChordHTML += '<label>Checkpoint: </label><select id="checkpoint_'+sectionId+'_'+$scope.chordIds[sectionId]+'"><option value="true">true</option><option value="false">false</option></select>';
+		
+		// insert checkpoint offset multiplier, offset duration and checkpoint duration
+		insertChordHTML += '<label>Offset: </label>';
+		insertChordHTML += '<select id="checkpoint_'+sectionId+'_'+$scope.chordIds[sectionId]+'_offset_multiplier"><option value="0">0</option>' + $scope.multiplier_insert_HTML + '</select>';
+		insertChordHTML += '<select id="checkpoint_'+sectionId+'_'+$scope.chordIds[sectionId]+'_offset">' + $scope.duration_insert_HTML + '</select>';
+		insertChordHTML += '<label>Duration: </label>';
+		insertChordHTML += '<select id="checkpoint_'+sectionId+'_'+$scope.chordIds[sectionId]+'_duration_multiplier">' + $scope.multiplier_insert_HTML + '</select>';
+		insertChordHTML += '<select id="checkpoint_'+sectionId+'_'+$scope.chordIds[sectionId]+'_duration">' + $scope.duration_insert_HTML + '</select></section>';
+		
 		$("#addChordBtn_"+sectionId).before(insertChordHTML);
 		$scope.chordIds[sectionId]++;
 	};
@@ -160,22 +171,23 @@ ChordBrah.controller("editorController", function($rootScope, $scope, $compile) 
 				$(".break_"+id).remove();
 				$(this).remove();
 				$scope.sectionId--;
+				$scope.chordIds.pop();
 			});		
 		}
 	};
 
 	$scope.generateTrack = function() {
 
-		var wholeNoteDuration = 240 / $("#tempoInput").val();
+		var wholeNoteDuration = (240 / $("#tempoInput").val()).toFixed(1);
 		var preload = [];
 		var sections = [];		
 		var noteDurations = 
 			{
 				"whole": wholeNoteDuration,
-				"half": wholeNoteDuration / 2,
-				"quarter": wholeNoteDuration / 4,
-			 	"eigth": wholeNoteDuration / 8,
-			 	"sixteenth": wholeNoteDuration / 16
+				"half": (wholeNoteDuration / 2).toFixed(1),
+				"quarter": (wholeNoteDuration / 4).toFixed(1),
+			 	"eigth": (wholeNoteDuration / 8).toFixed(1),
+			 	"sixteenth": (wholeNoteDuration / 16).toFixed(1)
 			};	
 
 		for(var i=0; i<$scope.sectionId; i++) {
@@ -189,8 +201,14 @@ ChordBrah.controller("editorController", function($rootScope, $scope, $compile) 
 						type: $("#type_"+i+"_"+j).val(),
 						multiplier:  $("#multiplier_"+i+"_"+j).val(),
 						duration: $("#duration_"+i+"_"+j).val(),
-						time_duration: $("#multiplier_"+i+"_"+j).val() * noteDurations[$("#duration_"+i+"_"+j).val()],
-						checkpoint: $("#checkpoint_"+i+"_"+j).val()
+						time_duration: ($("#multiplier_"+i+"_"+j).val() * noteDurations[$("#duration_"+i+"_"+j).val()]).toFixed(1),
+						checkpoint: $("#checkpoint_"+i+"_"+j).val(),
+						checkpoint_offset_multiplier: $("#checkpoint_"+i+"_"+j+"_offset_multiplier").val(),
+						checkpoint_offset_value: $("#checkpoint_"+i+"_"+j+"_offset").val(),
+						checkpoint_offset_time: ($("#checkpoint_"+i+"_"+j+"_offset_multiplier").val() * noteDurations[$("#checkpoint_"+i+"_"+j+"_offset").val()]).toFixed(1),
+						checkpoint_duration_multiplier: $("#checkpoint_"+i+"_"+j+"_duration_multiplier").val(),
+						checkpoint_duration_value: $("#checkpoint_"+i+"_"+j+"_duration").val(),
+						checkpoint_duration_time: ($("#checkpoint_"+i+"_"+j+"_duration_multiplier").val() * noteDurations[$("#checkpoint_"+i+"_"+j+"_duration").val()]).toFixed(1)
 					});
 
 				if($.inArray(name, preload) == -1)
@@ -268,6 +286,11 @@ ChordBrah.controller("editorController", function($rootScope, $scope, $compile) 
 				$("#multiplier_"+i+"_"+j).val(track.sections[i].chords[j].multiplier);
 				$("#duration_"+i+"_"+j).val(track.sections[i].chords[j].duration);
 				$("#checkpoint_"+i+"_"+j).val(track.sections[i].chords[j].checkpoint);
+				$("#checkpoint_"+i+"_"+j+"_offset_multiplier").val(track.sections[i].chords[j].checkpoint_offset_multiplier),
+				$("#checkpoint_"+i+"_"+j+"_offset").val(track.sections[i].chords[j].checkpoint_offset_value),
+				$("#checkpoint_"+i+"_"+j+"_duration_multiplier").val(track.sections[i].chords[j].checkpoint_duration_multiplier),
+				$("#checkpoint_"+i+"_"+j+"_duration").val(track.sections[i].chords[j].checkpoint_duration_value)
+				
 			}
 		}
 		
