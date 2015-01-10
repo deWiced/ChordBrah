@@ -119,11 +119,11 @@ function audioSetUp() {
 					endP /= tube.parameters.path.getLength();
 					endP = tube.parameters.path.getPointAt(endP);
 					
-					physical_track.checkpoints.push({ sectionId: i, start: startP, end: endP, value: temp_chord.name });
+					physical_track.checkpoints.push({ sectionId: i, start: startP, end: endP, value: temp_chord.type });
 					
 					if(k == 0) {
 						if(allCheckpointValues[i].indexOf(temp_chord.name) == -1) 
-							allCheckpointValues[i].push({ value: temp_chord.name, orientation: null});				
+							allCheckpointValues[i].push({name: temp_chord.name, value: temp_chord.type, orientation: null});				
 					}
 				}
 				
@@ -398,16 +398,15 @@ function render(delta_t) {
 	if(checkPointDistance(pos, currentCheckpoint.end) <= 50) {
 		
 		// get the correct answer
-		var correctOrientation;		
+		var correctOrientation = [];		
 		for(var i = 0; i < allCheckpointValues[currentSectionId].length; i++) {
 			if(allCheckpointValues[currentSectionId][i].value == currentCheckpoint.value) {
-				correctOrientation = allCheckpointValues[currentSectionId][i].orientation;
-				break;
+				correctOrientation.push(allCheckpointValues[currentSectionId][i].orientation);
 			}
 		}
 		
 		// check user answer
-		if(correctOrientation == orientation)
+		if(correctOrientation.indexOf(orientation) > -1)
 			console.log("Brava!");
 		else
 			console.log("Ajjja papi!");

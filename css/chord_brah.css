@@ -254,15 +254,18 @@ label {
 #gui_left, #gui_right {
 	position: relative;
 	display: block;
-	width: 130px;
 	top: 42px;
 	margin-left: 5px;
 	margin-right: 5px;
 	float: left;
 }
 
+#gui_left {
+	width: 130px;
+}
+
 #gui_right {
-	left: 35px;
+	right: -120px;
 }
 
 #gui_up {
