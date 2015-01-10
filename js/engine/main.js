@@ -39,6 +39,11 @@ var physical_track =
 
 var isPause = true;
 var currentChord = null;
+var currentCheckpointIndex = 0;
+var currentCheckpoint = null;
+
+var currentSectionId = 0;
+var allCheckpointValues = [];
 
 // SCREEN COMMANDS
 document.body.addEventListener("keydown", function( event ) {
@@ -71,6 +76,7 @@ function audioSetUp() {
 	// CREATE A LIST OF ALL CHORDS
 	var trackPercent = 0;
 	for(var i=0; i<audio_track.sections.length; i++) {
+		allCheckpointValues.push([]);
 		for(var k=0; k<audio_track.sections[i].iterations; k++) {
 			for(var j=0; j<audio_track.sections[i].chords.length; j++) {
 				var temp_chord = audio_track.sections[i].chords[j];
@@ -89,11 +95,16 @@ function audioSetUp() {
 					endP /= tube.parameters.path.getLength();
 					endP = tube.parameters.path.getPointAt(endP);
 					
-					physical_track.checkpoints.push({ start: startP, end: endP, value: temp_chord.name });
+					physical_track.checkpoints.push({ sectionId: i, start: startP, end: endP, value: temp_chord.name });
+					
+					if(k == 0) {
+						if(allCheckpointValues[i].indexOf(temp_chord.name) == -1) 
+							allCheckpointValues[i].push({ value: temp_chord.name, orientation: null});				
+					}
 				}
 				
 				trackPercent += parseFloat(temp_chord.time_duration);
-
+				
 			}
 		}
 	}
@@ -137,7 +148,9 @@ function initGame(screenWidth, screenHeight, generatedTrack) {
 	// SET UP AUDIO
 	audio_track = generatedTrack;
 	audioSetUp();
-	add_n_chekpoints(0, 6);
+	add_n_chekpoints(0, 3);
+	currentCheckpoint = physical_track.checkpoints[0];
+	generateChekpointValues();
 	
 	// SPACESHIP
 	createSpaceShip();
@@ -234,9 +247,6 @@ function createSpaceShip() {
 }
 
 function onWindowResize() {
-
-	//camera.camera.aspect = window.innerWidth / window.innerHeight;
-	//camera.camera.updateProjectionMatrix();
 	
 	cameraShip.aspect = gameRenderWidth / gameRenderHeight;
 	cameraShip.updateProjectionMatrix();
@@ -247,8 +257,31 @@ function onWindowResize() {
 
 }
 
+function generateChekpointValues() {
+	var randomValues = [];
+	for(var i=0; i < allCheckpointValues[currentSectionId].length; i++) {
+		var rand = Math.floor((Math.random() * 100) + 1);
+		while(randomValues.indexOf(rand) > -1)
+			rand = Math.floor((Math.random() * 100) + 1);
+		
+		randomValues.push({ind: i, val: rand});
+	}
+	
+	randomValues.sort(function(a, b){return a.val-b.val});
+
+	for(var i=0; i < randomValues.length; i++) {
+		switch(i) {
+			case 0: allCheckpointValues[currentSectionId][randomValues[i].ind].orientation = "right"; break;
+			case 1: allCheckpointValues[currentSectionId][randomValues[i].ind].orientation = "left"; break;
+			case 2: allCheckpointValues[currentSectionId][randomValues[i].ind].orientation = "up"; break;
+			case 3: allCheckpointValues[currentSectionId][randomValues[i].ind].orientation = "down"; break;
+		}
+	}
+	console.log(allCheckpointValues[currentSectionId]);
+}
+
 function add_n_chekpoints(start, n) {
-	for(var i = start; i < n && i < physical_track.checkpoints.length; i++) {
+	for(var i = start; i < start + n && i < physical_track.checkpoints.length; i++) {
 		addCheckpoint(physical_track.checkpoints[i].start, physical_track.checkpoints[i].end);
 	}
 }
@@ -282,10 +315,13 @@ function animate() {
 	requestAnimationFrame( animate );
 }
 
+function checkPointDistance(point1, point2) {
+	return Math.sqrt( Math.pow((point2.x - point1.x), 2) + Math.pow((point2.y - point1.y), 2) + Math.pow((point2.z - point1.z), 2) );
+}
+
 var colorIndex = 48;
 var currentPick = 0;
 var pick;
-var isMoved = false;
 var orientation = null;
 
 // render loop 
@@ -305,8 +341,7 @@ function render(delta_t) {
 	pick = Math.floor( pickt );
 	var pickNext = ( pick + 1 ) % segments;
 	
-	// draw checkpoint
-	
+	// color track
 	if(pick != currentPick) {
 
 		if(orientation != null)
@@ -321,6 +356,31 @@ function render(delta_t) {
 		}
 		
 		currentPick = pick;
+	}
+	
+	// check if we are at current checkpoint end
+	if(checkPointDistance(pos, currentCheckpoint.end) <= 50) {
+		
+		// get the correct answer
+		var correctOrientation;		
+		for(var i = 0; i < allCheckpointValues[currentSectionId].length; i++) {
+			if(allCheckpointValues[currentSectionId][i].value == currentCheckpoint.value) {
+				correctOrientation = allCheckpointValues[currentSectionId][i].orientation;
+				break;
+			}
+		}
+		
+		// check user answer
+		if(correctOrientation == orientation)
+			console.log("Brava!");
+		else
+			console.log("Ajjja papi!");
+		
+		add_n_chekpoints( (checkpointMeshes.length / 2) , 1);
+		
+		currentCheckpointIndex++;
+		if(currentCheckpointIndex < physical_track.checkpoints.length)
+			currentCheckpoint = physical_track.checkpoints[currentCheckpointIndex];
 	}
 	
 	binormal.subVectors( tube.binormals[ pickNext ], tube.binormals[ pick ] );
@@ -366,4 +426,3 @@ function render(delta_t) {
 	composer.render( scene, cameraShip );
 
 }
-

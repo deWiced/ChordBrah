@@ -75,8 +75,9 @@ function setScale( scale) {
 
 }
 
+var checkpointMeshes = [];
+
 function addCheckpoint(startP, endP) {
-	console.log(startP, endP);
 	// add start
 	var checkpoint_geometry = new THREE.PlaneGeometry(2000, 1000);
 	var checkpoint_material = new THREE.MeshBasicMaterial({color: 0x00CC00, transparent: true, opacity: 0.3 });
@@ -84,7 +85,9 @@ function addCheckpoint(startP, endP) {
 	var checkpoint_mesh = new THREE.Mesh(checkpoint_geometry, checkpoint_material);
 	checkpoint_mesh.position.set(startP.x, startP.y , startP.z);
 	checkpoint_mesh.rotation.x = Math.PI / 2;
+	
 	scene.add(checkpoint_mesh);
+	checkpointMeshes.push(checkpoint_mesh);
 	
 	// add end
 	var checkpoint_geometry_end = new THREE.PlaneGeometry(2000, 1000);
@@ -95,7 +98,7 @@ function addCheckpoint(startP, endP) {
 	checkpoint_mesh_end.rotation.x = Math.PI / 2;
 	
 	scene.add(checkpoint_mesh_end);
-
+	checkpointMeshes.push(checkpoint_mesh_end);
 }
 
 var dirtyIndexes = [];
