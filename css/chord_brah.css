@@ -223,3 +223,63 @@ label {
 	font-size: 32px;
 	color: white;
 }
+
+
+
+/* GUI STYLE */
+
+#gui {
+	position: absolute;
+	top: 20px;
+	right: 20px;
+	width: 400px;
+	height: 190px;
+	background:rgba(50,50,50,0.5);
+	display: none;
+}
+
+#gui_up, #gui_left, #gui_right, #gui_down {
+	margin: 0px;
+	font-size: 22px;
+	color: white;
+}
+
+#gui_up, #gui_down {
+ 	position: relative;
+ 	display: block;
+ 	clear: both;
+ 	text-align: center;
+}
+
+#gui_left, #gui_right {
+	position: relative;
+	display: block;
+	width: 130px;
+	top: 42px;
+	margin-left: 5px;
+	margin-right: 5px;
+	float: left;
+}
+
+#gui_right {
+	left: 35px;
+}
+
+#gui_up {
+	margin-top: 10px;
+	margin-bottom: 5px;
+}
+
+#gui_down {
+	bottom: -90px;
+}
+
+#arrowImg {
+	position: absolute;
+	width: 120px;
+	height: 120px;
+	display: block;
+	float: left;
+	top: 37px;
+	left: 140px;
+ }

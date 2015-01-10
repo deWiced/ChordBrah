@@ -64,6 +64,30 @@ document.body.addEventListener("keydown", function( event ) {
 	}
 }, false);
 
+function displayGUI() {
+	$("#gui").css("display", "block");
+}
+
+function setGUIvalues(up, right, down, left) {
+	for(var i=0; i < allCheckpointValues[currentSectionId].length; i++) {
+		var checkP = allCheckpointValues[currentSectionId][i];
+		$("#gui_" + checkP.orientation).text(String(checkP.value));
+	}
+}
+
+function colorGUIselection() {
+	if(lastOrientation == orientation)
+		return;
+	
+	$("#gui_" + orientation).css("color", "red");
+	lastOrientation = orientation;
+}
+
+function clearGUIselection() {
+	$("#gui_" + lastOrientation).css("color", "white");
+	lastOrientation = null;
+}
+
 function audioSetUp() {
 
 	// REGISTER CHORDS
@@ -148,9 +172,14 @@ function initGame(screenWidth, screenHeight, generatedTrack) {
 	// SET UP AUDIO
 	audio_track = generatedTrack;
 	audioSetUp();
+	
+	// ADD FIRST 3 CHECKPOINTS
 	add_n_chekpoints(0, 3);
 	currentCheckpoint = physical_track.checkpoints[0];
+	
+	// GENERATE AND DIPSLAY CHECKPOINT VALUES
 	generateChekpointValues();
+	setGUIvalues();
 	
 	// SPACESHIP
 	createSpaceShip();
@@ -319,13 +348,20 @@ function checkPointDistance(point1, point2) {
 	return Math.sqrt( Math.pow((point2.x - point1.x), 2) + Math.pow((point2.y - point1.y), 2) + Math.pow((point2.z - point1.z), 2) );
 }
 
+var firstDraw = true;
 var colorIndex = 48;
 var currentPick = 0;
 var pick;
 var orientation = null;
+var lastOrientation = null;
 
 // render loop 
 function render(delta_t) {
+	
+	if(firstDraw) {
+		displayGUI();
+		firstDraw = false;
+	}
 	
 	var delta_s = SHIP_SPEED * delta_t * SPEED_MODIFIER;
 	ship_traveled += delta_s;

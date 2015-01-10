@@ -103,7 +103,7 @@ function addCheckpoint(startP, endP) {
 	checkpointMeshes.push(checkpoint_mesh);
 	
 	// add end
-	var checkpoint_geometry_end = new THREE.PlaneGeometry(2000, 1000);
+	var checkpoint_geometry_end = new THREE.PlaneBufferGeometry(2000, 1000);
 	var checkpoint_material_end = new THREE.MeshBasicMaterial({color: 0xFF0066, transparent: true, opacity: 0.3 });
 	checkpoint_material_end.side = THREE.DoubleSide;
 	var checkpoint_mesh_end = new THREE.Mesh(checkpoint_geometry_end, checkpoint_material_end);
