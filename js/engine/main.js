@@ -29,7 +29,7 @@ var material = new THREE.LineBasicMaterial({
 });
 
 var SHIP_SPEED = 100;
-var SPEED_MODIFIER = 40;
+var SPEED_MODIFIER = 70;
 var ship_traveled = 0;
 var physical_track = 
 	{
@@ -81,7 +81,7 @@ function audioSetUp() {
 			for(var j=0; j<audio_track.sections[i].chords.length; j++) {
 				var temp_chord = audio_track.sections[i].chords[j];
 				chord_sequence.push(temp_chord);
-				if(temp_chord.checkpoint) {
+				if(temp_chord.checkpoint == "true") {
 					
 					var startP = (trackPercent + parseFloat(temp_chord.checkpoint_offset_time)) * SHIP_SPEED * SPEED_MODIFIER;
 					if(startP >= tube.parameters.path.getLength())
@@ -156,7 +156,7 @@ function initGame(screenWidth, screenHeight, generatedTrack) {
 	createSpaceShip();
 	
 	// RENDERER
-	renderer = new THREE.WebGLRenderer( { antialias: false } );
+	renderer = new THREE.WebGLRenderer( { antialias: true } );
 	renderer.setSize( gameRenderWidth, gameRenderHeight );
 	container = document.getElementById( 'container' );
 	container.appendChild( renderer.domElement );
@@ -260,9 +260,9 @@ function onWindowResize() {
 function generateChekpointValues() {
 	var randomValues = [];
 	for(var i=0; i < allCheckpointValues[currentSectionId].length; i++) {
-		var rand = Math.floor((Math.random() * 100) + 1);
+		var rand = Math.floor((Math.random() * 30) + 1);
 		while(randomValues.indexOf(rand) > -1)
-			rand = Math.floor((Math.random() * 100) + 1);
+			rand = Math.floor((Math.random() * 30) + 1);
 		
 		randomValues.push({ind: i, val: rand});
 	}

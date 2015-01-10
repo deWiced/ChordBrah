@@ -1,4 +1,16 @@
 
+GrannyKnotModf = THREE.Curve.create( function(){},
+
+	 function(t) {
+	    t = 2 * Math.PI * t;
+
+	    var x = -150 * Math.cos(3*t) + 90 * Math.sin(2*t) - 150 * Math.cos(4 * t);
+	    var y = 80 * Math.cos(5 * t) - 100 * Math.cos(4 * t) + 120 * Math.sin(3 * t);
+	    var z = 130 * Math.cos(2 * t) - 80 * Math.sin(3 * t);
+	    return new THREE.Vector3(x, y, z).multiplyScalar(85);
+	}
+);
+
 function createTrack(){
 
 	var randomPoints = [
@@ -36,9 +48,10 @@ function createTrack(){
 		extrudePath		: randomSpline
 	};
 	
+	var grannyModf = new GrannyKnotModf();
 	
-	//tube = new THREE.TubeGeometry(randomSpline, 100, 100, 3, false); 
-	tube = new THREE.TubeGeometry(randomSpline, 150, 500, 8, false);
+	// tube = new THREE.TubeGeometry(grannyModf, 150, 500, 8, false);
+	tube = new THREE.TubeGeometry(grannyModf, 230, 500, 8, false);
 	addGeometry(tube, 0xffffff);
 	//setScale(1.2);
 }
@@ -79,7 +92,7 @@ var checkpointMeshes = [];
 
 function addCheckpoint(startP, endP) {
 	// add start
-	var checkpoint_geometry = new THREE.PlaneGeometry(2000, 1000);
+	var checkpoint_geometry = new THREE.PlaneBufferGeometry(2000, 1000);
 	var checkpoint_material = new THREE.MeshBasicMaterial({color: 0x00CC00, transparent: true, opacity: 0.3 });
 	checkpoint_material.side = THREE.DoubleSide;
 	var checkpoint_mesh = new THREE.Mesh(checkpoint_geometry, checkpoint_material);
