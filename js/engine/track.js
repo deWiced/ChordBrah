@@ -96,7 +96,8 @@ function addCheckpoint(startP, endP) {
 	var checkpoint_material = new THREE.MeshBasicMaterial({color: 0x00CC00, transparent: true, opacity: 0.3 });
 	checkpoint_material.side = THREE.DoubleSide;
 	var checkpoint_mesh = new THREE.Mesh(checkpoint_geometry, checkpoint_material);
-	checkpoint_mesh.position.set(startP.x, startP.y , startP.z);
+	var point = tube.parameters.path.getPointAt(startP);
+	checkpoint_mesh.position.set(point.x, point.y, point.z);
 	checkpoint_mesh.rotation.x = Math.PI / 2;
 	
 	scene.add(checkpoint_mesh);
@@ -107,11 +108,18 @@ function addCheckpoint(startP, endP) {
 	var checkpoint_material_end = new THREE.MeshBasicMaterial({color: 0xFF0066, transparent: true, opacity: 0.3 });
 	checkpoint_material_end.side = THREE.DoubleSide;
 	var checkpoint_mesh_end = new THREE.Mesh(checkpoint_geometry_end, checkpoint_material_end);
-	checkpoint_mesh_end.position.set(endP.x, endP.y , endP.z);
+	point = tube.parameters.path.getPointAt(endP);
+	checkpoint_mesh_end.position.set(point.x, point.y, point.z);
 	checkpoint_mesh_end.rotation.x = Math.PI / 2;
 	
 	scene.add(checkpoint_mesh_end);
 	checkpointMeshes.push(checkpoint_mesh_end);
+}
+
+function removeCheckpoint() {
+	var temp = checkpointMeshes.splice(0, 2);
+	scene.remove(temp[0]);
+	scene.remove(temp[1]);
 }
 
 var dirtyIndexes = [];

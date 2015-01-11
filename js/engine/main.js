@@ -7,10 +7,11 @@ var FOV = 75, NEAR_PLANE = 0.1, FAR_PLANE = 1000;
 
 var scene, camera, controls, renderer, composer, container;
 var glitch = false;
+
 var skyBox;
 var ship, shipControls;
 var clock = new THREE.Clock(false);
-var shipStartPosition = -9600;
+var shipStartPosition;
 var track;
 var tubeMesh;
 var tube; 
@@ -41,6 +42,7 @@ var isPause = true;
 var currentChord = null;
 var currentCheckpointIndex = 0;
 var currentCheckpoint = null;
+var checkpointAddingIndex = 0;
 
 var currentSectionId = 0;
 var allCheckpointValues = [];
@@ -59,8 +61,8 @@ document.body.addEventListener("keydown", function( event ) {
 	    			 pauseChord(currentChord);
 	    		 }
 	    		 break;
-		case 70: THREEx.FullScreen.request(); break;
-		case 71: glitch = !glitch; setupShaders(); break;
+		//case 70: THREEx.FullScreen.request(); break;
+		//case 71: glitch = !glitch; setupShaders(); break;
 	}
 }, false);
 
@@ -84,7 +86,10 @@ function colorGUIselection() {
 }
 
 function clearGUIselection() {
-	$("#gui_" + lastOrientation).css("color", "white");
+	$("#gui_up").css("color", "white");
+	$("#gui_right").css("color", "white");
+	$("#gui_down").css("color", "white");
+	$("#gui_left").css("color", "white");
 	lastOrientation = null;
 }
 
@@ -107,19 +112,17 @@ function audioSetUp() {
 				chord_sequence.push(temp_chord);
 				if(temp_chord.checkpoint == "true") {
 					
-					var startP = (trackPercent + parseFloat(temp_chord.checkpoint_offset_time)) * SHIP_SPEED * SPEED_MODIFIER;
-					if(startP >= tube.parameters.path.getLength())
-						startP -= tube.parameters.path.getLength();
-					startP /= tube.parameters.path.getLength();
-					startP = tube.parameters.path.getPointAt(startP);
+					var startProcent = (trackPercent + parseFloat(temp_chord.checkpoint_offset_time)) * SHIP_SPEED * SPEED_MODIFIER;
+					if(startProcent >= tube.parameters.path.getLength())
+						startProcent -= tube.parameters.path.getLength();
+					startProcent /= tube.parameters.path.getLength();
 	
-					var endP = (trackPercent + parseFloat(temp_chord.checkpoint_offset_time) + parseFloat(temp_chord.checkpoint_duration_time)) * SHIP_SPEED * SPEED_MODIFIER;		
-					if(endP >= tube.parameters.path.getLength())
-						endP -= tube.parameters.path.getLength();
-					endP /= tube.parameters.path.getLength();
-					endP = tube.parameters.path.getPointAt(endP);
+					var endProcent = (trackPercent + parseFloat(temp_chord.checkpoint_offset_time) + parseFloat(temp_chord.checkpoint_duration_time)) * SHIP_SPEED * SPEED_MODIFIER;		
+					if(endProcent >= tube.parameters.path.getLength())
+						endProcent -= tube.parameters.path.getLength();
+					endProcent /= tube.parameters.path.getLength();
 					
-					physical_track.checkpoints.push({ sectionId: i, start: startP, end: endP, value: temp_chord.type });
+					physical_track.checkpoints.push({ sectionId: i, startProcent: startProcent, endProcent: endProcent,  value: temp_chord.type });
 					
 					if(k == 0) {
 						if(allCheckpointValues[i].indexOf(temp_chord.name) == -1) 
@@ -153,6 +156,14 @@ function initGame(screenWidth, screenHeight, generatedTrack) {
 	sun.position.set(100000/2, 100000/2, 100000/2);
 	scene.add( sun );
 
+	// SKYBOX
+	//createSkySphere();
+	createSkyBox("img/skybox/red/red_", ".jpg");
+	
+	// ADD TRACK
+	createTrack();
+	shipStartPosition = tube.parameters.path.getPointAt(0);
+	
 	//add shipTEMP camera
 	parent = new THREE.Object3D();
 	parent.position.set(0,0,shipStartPosition);
@@ -161,13 +172,6 @@ function initGame(screenWidth, screenHeight, generatedTrack) {
 	cameraShip = new THREE.PerspectiveCamera( 75, gameRenderWidth / gameRenderHeight, 0.01, 1000000 );
 
 	target = new Target();
-
-	// SKYBOX
-	//createSkySphere();
-	createSkyBox("img/skybox/red/red_", ".jpg");
-	
-	// ADD TRACK
-	createTrack();
 	
 	// SET UP AUDIO
 	audio_track = generatedTrack;
@@ -203,8 +207,8 @@ function setupShaders() {
 	composer = new THREE.EffectComposer( renderer );
 	composer.addPass( new THREE.RenderPass( scene, cameraShip ) );
 
-	//composer.addPass(new THREE.BloomPass( 2.0 ));
-	if (glitch) composer.addPass(new THREE.GlitchPass( ));
+	//if (bloom) composer.addPass(new THREE.BloomPass( bloomIntens ));
+	if (glitch) composer.addPass(new THREE.GlitchPass());
 
 	var effectVignette = new THREE.ShaderPass( THREE.VignetteShader );
 	effectVignette.uniforms[ "offset" ].value = 0.95;
@@ -306,12 +310,12 @@ function generateChekpointValues() {
 			case 3: allCheckpointValues[currentSectionId][randomValues[i].ind].orientation = "down"; break;
 		}
 	}
-	console.log(allCheckpointValues[currentSectionId]);
 }
 
 function add_n_chekpoints(start, n) {
 	for(var i = start; i < start + n && i < physical_track.checkpoints.length; i++) {
-		addCheckpoint(physical_track.checkpoints[i].start, physical_track.checkpoints[i].end);
+		addCheckpoint(physical_track.checkpoints[i].startProcent, physical_track.checkpoints[i].endProcent);
+		checkpointAddingIndex++;
 	}
 }
 
@@ -330,7 +334,7 @@ function animate() {
 				currentChord = chord_sequence[pos].name;
 				playChord(currentChord, chord_sequence[pos].time_duration);
 				currentDurration = chord_sequence[pos].time_duration;
-				pos++; // DO WE WANT TO LOOP
+				pos++; 
 				
 			}
 		}
@@ -355,6 +359,8 @@ var pick;
 var orientation = null;
 var lastOrientation = null;
 
+var glitchCt = 0;
+var bloomCt = 0;
 // render loop 
 function render(delta_t) {
 	
@@ -365,9 +371,10 @@ function render(delta_t) {
 	
 	var delta_s = SHIP_SPEED * delta_t * SPEED_MODIFIER;
 	ship_traveled += delta_s;
-	if(ship_traveled > tube.parameters.path.getLength())
+	if(ship_traveled > tube.parameters.path.getLength()) {
 		ship_traveled = 0;
-
+		colorIndex = 32;
+	}
 	var t = ship_traveled / tube.parameters.path.getLength();
 	var pos = tube.parameters.path.getPointAt(t);
 
@@ -392,11 +399,19 @@ function render(delta_t) {
 		}
 		
 		currentPick = pick;
+		
+		if(glitch)
+			glitchCt++;
+		
+		if(glitchCt == 4) {
+			glitch = false;
+			glitchCt = 0;
+			setupShaders();
+		}	
 	}
 	
 	// check if we are at current checkpoint end
-	if(checkPointDistance(pos, currentCheckpoint.end) <= 50) {
-		
+	if(currentCheckpoint != null && t - currentCheckpoint.endProcent >= 0 && t - currentCheckpoint.endProcent <= 3) {
 		// get the correct answer
 		var correctOrientation = [];		
 		for(var i = 0; i < allCheckpointValues[currentSectionId].length; i++) {
@@ -406,16 +421,30 @@ function render(delta_t) {
 		}
 		
 		// check user answer
-		if(correctOrientation.indexOf(orientation) > -1)
-			console.log("Brava!");
-		else
-			console.log("Ajjja papi!");
+		if(correctOrientation.indexOf(orientation) > -1) {
+			// smth
+		}
+		else {
+			glitch = true;
+			setupShaders();
+		}
 		
-		add_n_chekpoints( (checkpointMeshes.length / 2) , 1);
+		// add new checkpoint
+		add_n_chekpoints( checkpointAddingIndex , 1);
+		
+		// remove last checkpoint
+		if(currentCheckpointIndex > 0) {
+			removeCheckpoint();
+		}
 		
 		currentCheckpointIndex++;
 		if(currentCheckpointIndex < physical_track.checkpoints.length)
 			currentCheckpoint = physical_track.checkpoints[currentCheckpointIndex];
+		else {
+			currentCheckpoint = null;
+			currentCheckpointIndex = -1;
+		}
+		
 	}
 	
 	binormal.subVectors( tube.binormals[ pickNext ], tube.binormals[ pick ] );

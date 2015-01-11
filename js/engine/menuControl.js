@@ -125,7 +125,7 @@ ChordBrah.controller("editorController", function($rootScope, $scope, $compile) 
 		insertChordHTML += '<select id="duration_'+sectionId+'_'+$scope.chordIds[sectionId]+'">' + $scope.duration_insert_HTML + '</select>';
 
 		// insert checkpoint label and selector
-		insertChordHTML += '<label>Checkpoint: </label><select id="checkpoint_'+sectionId+'_'+$scope.chordIds[sectionId]+'"><option value="true">true</option><option value="false">false</option></select>';
+		insertChordHTML += '<label>Checkpoint: </label><select id="checkpoint_'+sectionId+'_'+$scope.chordIds[sectionId]+'"><option value="false">false</option><option value="true">true</option></select>';
 		
 		// insert checkpoint offset multiplier, offset duration and checkpoint duration
 		insertChordHTML += '<label>Offset: </label>';
