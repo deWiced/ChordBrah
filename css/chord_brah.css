@@ -93,7 +93,7 @@ body {
 
 .cord_brah_form input[type="text"] {
 	margin-left: 10px;
-	color: #e7634b;
+	color: #E64016;
 	background: transparent;
     border:0;
     border-bottom: 1px solid white;
@@ -133,7 +133,7 @@ label {
 
 .cord_brah_form button:hover,
 .cord_brah_form a:hover {
-	background-color: #e7634b;
+	background-color: #E64016;
 }
 
 .cord_brah_form a, .cord_brah_form a:VISITED {
@@ -160,7 +160,7 @@ label {
 }
 
 #openFileBtn-label:hover {
-	background-color: #e7634b;
+	background-color: #E64016;
 }
 
 .addChordBtn,
@@ -178,7 +178,7 @@ label {
 
 .cord_brah_form select {
 	background-color: transparent;
-	color: #e7634b;
+	color: #E64016;
 	border: none;
 }
 
@@ -285,4 +285,51 @@ label {
 	float: left;
 	top: 37px;
 	left: 140px;
+ }
+ 
+ 
+ /* In-game menu style */
+ 
+ #gameMenu {
+ 	position: absolute;
+ 	top: 0;
+ 	left: 0;
+ 	width: 100%;
+ 	height: 100%;
+ 	background:rgba(40,40,40,0.7);
+	display: none;
+	color: white;
+	font-family: 'Love Ya Like A Sister', cursive;
+ }
+ 
+ #gameMenu label {
+ 	margin: 0;
+ }
+ 
+ #startLabel, #exitToMenuBtn {
+    position: absolute;
+ 	font-size: 62px;
+    display: block;
+    text-align: center;
+    top: 40%;
+ }
+ 
+ #startLabel {
+ 	width: 100%;
+ }
+ 
+ #exitToMenuBtn {
+ 	color: white;
+ 	font-family: 'Love Ya Like A Sister', cursive;
+ 	display: none;
+ 	cursor: pointer;
+ 	left: 32%;
+ 	border: none;
+ 	background: transparent;
+ 	border-radius: 25px;
+ 	padding: 10px 20px;
+ }
+ 
+ #exitToMenuBtn:HOVER {
+ 	background-color: #E64016 /*#e7634b*/
  }

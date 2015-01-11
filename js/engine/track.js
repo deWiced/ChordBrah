@@ -56,11 +56,6 @@ function createTrack(){
 	//setScale(1.2);
 }
 
-var coloredMaterial = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.7, wireframe: false, side: THREE.DoubleSide, color: 0x00FFFF, vertexColors: THREE.VertexColors });
-var invisibleMaterail = new THREE.MeshBasicMaterial({ visible: false });
-var materials = [];
-
-
 function addGeometry( geometry, color ) {
 
 	for(var i=0; i<geometry.faces.length; i++)
@@ -80,28 +75,9 @@ function addGeometry( geometry, color ) {
 
 }
 
-
-
 function setScale( scale) {
-
 	tubeMesh.scale.set( scale, scale, scale );
-
 }
-
-var checkpointPoints = [];
-var cl = 600;
-checkpointPoints.push( new THREE.Vector2 (0, -cl));
-checkpointPoints.push( new THREE.Vector2 (3*cl/4, -3*cl/4));
-checkpointPoints.push( new THREE.Vector2 (cl, 0 ));
-checkpointPoints.push( new THREE.Vector2 (3*cl/4, 3*cl/4));
-checkpointPoints.push( new THREE.Vector2 (0, cl));
-checkpointPoints.push( new THREE.Vector2 (-3*cl/4, 3*cl/4));
-checkpointPoints.push( new THREE.Vector2 (-cl, 0));
-checkpointPoints.push( new THREE.Vector2 (-3*cl/4, -3*cl/4));
-var checkpoint_shape = new THREE.Shape(checkpointPoints);
-var checkpoint_geometry = new THREE.ShapeGeometry(checkpoint_shape);
-
-var checkpointMeshes = [];
 
 function addCheckpoint(startP, endP) {
 	// add start
@@ -160,8 +136,6 @@ function removeCheckpoint() {
 	scene.remove(temp[1]);
 }
 
-var dirtyIndexes = [];
-
 function markTrack() {
 	
 	var indexOffsets;
@@ -194,5 +168,51 @@ function clearMark() {
 	for(var i = dirtyIndexes.length -1 ; i >= 0; i--) {
 		materials[dirtyIndexes[i]] = invisibleMaterail;
 		dirtyIndexes.pop();
+	}
+}
+
+function disposeObject(obj)
+{
+    if (obj !== null)
+    {
+        for (var i = 0; i < obj.children.length; i++)
+        {
+        	disposeObject(obj.children[i]);
+        }
+        if (obj.geometry)
+        {
+            obj.geometry.dispose();
+            obj.geometry = undefined;
+        }
+        if (obj.material)
+        {
+            if (obj.material.materials)
+            {
+                for (i = 0; i < obj.material.materials.length; i++)
+                {
+                    obj.material.materials[i].dispose();
+                }
+            }
+            else
+            {
+                obj.material.dispose();
+            }
+            obj.material = undefined;
+        }
+        if (obj.texture)
+        {
+            obj.texture.dispose();
+            obj.texture = undefined;
+        }
+    }
+    //obj = undefined;
+}
+
+function clearScene() {
+	var obj, i;
+	for ( i = scene.children.length - 1; i >= 0 ; i -- ) {
+	    obj = scene.children[ i ];
+    	disposeObject(obj);
+        scene.remove(obj);
 	}
 }

@@ -72,9 +72,6 @@ var CHORD_MULTIPLIERS = [1,2,3,4,5,6,7,8,9,10];
 var note_dir = "audio_files/chord_base/";
 var note_type = ".ogg";
 
-var registered_chords = {};
-var chord_instances = {};
-
 function registerChord(chordName){
 	
 	var root = chordName.split("-")[0];
@@ -90,8 +87,6 @@ function registerChord(chordName){
 	
 	registered_chords[chordName] = notes;
 }
-
-var chord_sequence = [];
 
 function playChord(chordName, duration) {
 	duration *= 1000;

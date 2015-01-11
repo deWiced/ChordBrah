@@ -1,154 +1,99 @@
-/**
- * 
- */
 
 // constants
 var FOV = 75, NEAR_PLANE = 0.1, FAR_PLANE = 1000;
 
 var scene, camera, controls, renderer, composer, container;
-var glitch = false;
-
+var glitch;
 var skyBox;
 var ship, shipControls;
-var clock = new THREE.Clock(false);
-var shipStartPosition;
-var shipStartProcent = 0.9;
+var clock;
+var shipStartPosition, shipStartProcent, pos;
 var track;
 var tubeMesh;
 var tube; 
-var binormal = new THREE.Vector3();
-var normal = new THREE.Vector3();
-var scale = 1;
-var targetRotation = 0;
+var binormal;
+var normal;
+var scale;
+var targetRotation;
 var gameRenderWidth, gameRenderHeight;
-
 var parent, cameraShip;
-
 var target;
+var SHIP_SPEED, SPEED_MODIFIER, ship_traveled;
+var physical_track;
+var isPause;
+var currentChord, currentDurration;
+var currentCheckpointIndex, currentCheckpoint, checkpointAddingIndex, currentSectionId, allCheckpointValues;
+var startAudio;
+var drawCt;
+var colorIndex;
+var currentPick, pick;
+var orientation, lastOrientation;
 
-var material = new THREE.LineBasicMaterial({
-    color: 0x0000ff
-});
+var dirtyIndexes;
+var coloredMaterial, invisibleMaterail, materials;
+var checkpointPoints, cl;
+var checkpoint_shape, checkpoint_geometry, checkpointMeshes;
 
-var SHIP_SPEED = 100;
-var SPEED_MODIFIER = 70;
-var ship_traveled = 0;
-var physical_track = 
-	{
-		length: 0,
-		checkpoints: []
-};
+var registered_chords, chord_instances, chord_sequence;
 
-var isPause = false;
-var currentChord = null;
-var currentCheckpointIndex = 0;
-var currentCheckpoint = null;
-var checkpointAddingIndex = 0;
-
-var currentSectionId = 0;
-var allCheckpointValues = [];
-
-var startAudio = false;
-
-// SCREEN COMMANDS
-document.body.addEventListener("keydown", function( event ) {
-	switch (event.keyCode) {
-	    case 32: isPause = !isPause; 
-	    		 if(!isPause) {
-	    			 clock.start();
-	    			 requestAnimationFrame( animate );
-	    			 resumeChord(currentChord);
-	    		 }
-	    		 else {
-	    			 clock.stop();
-	    			 pauseChord(currentChord);
-	    		 }
-	    		 break;
-		//case 70: THREEx.FullScreen.request(); break;
-		//case 71: glitch = !glitch; setupShaders(); break;
-	}
-}, false);
-
-function displayGUI() {
-	$("#gui").css("display", "block");
-}
-
-function clearGUIvalues() {
-	$("#gui_up").text("");
-	$("#gui_right").text("");
-	$("#gui_down").text("");
-	$("#gui_left").text("");
-}
-
-function setGUIvalues(up, right, down, left) {
-	for(var i=0; i < allCheckpointValues[currentSectionId].length; i++) {
-		var checkP = allCheckpointValues[currentSectionId][i];
-		$("#gui_" + checkP.orientation).text(String(checkP.value));
-	}
-}
-
-function colorGUIselection() {
-	if(lastOrientation == orientation)
-		return;
+function initGameValues() {
+	// MAIN VALUES
+	glitch = false;
+	glitchCt = 0;
+	clock = new THREE.Clock(false);
+	shipStartProcent = 0.9;
+	pos = 0;
+	binormal = new THREE.Vector3();
+	normal = new THREE.Vector3();
+	scale = 1;
+	targetRotation = 0;
+	SHIP_SPEED = 100;
+	SPEED_MODIFIER = 70;
+	ship_traveled = 0;
+	physical_track = {checkpoints: [] };
+	isPause = false;
+	currentChord = null;
+	currentDurration = 0;
+	currentCheckpointIndex = 0;
+	currentCheckpoint = null;
+	checkpointAddingIndex = 0;
+	currentSectionId = 0;
+	allCheckpointValues = [];
+	startAudio = false;
+	drawCt = 0;
+	colorIndex = 48;
+	currentPick = 0;
+	orientation = null;
+	lastOrientation = null; 
 	
-	$("#gui_" + orientation).css("color", "red");
-	lastOrientation = orientation;
+	// TRACK VALUES
+	dirtyIndexes = [];
+	coloredMaterial = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.7, wireframe: false, side: THREE.DoubleSide, color: 0x00FFFF, vertexColors: THREE.VertexColors });
+	invisibleMaterail = new THREE.MeshBasicMaterial({ visible: false });
+	materials = [];
+	checkpointPoints = [];
+	cl = 600;
+	checkpointPoints.push( new THREE.Vector2 (0, -cl));
+	checkpointPoints.push( new THREE.Vector2 (3*cl/4, -3*cl/4));
+	checkpointPoints.push( new THREE.Vector2 (cl, 0 ));
+	checkpointPoints.push( new THREE.Vector2 (3*cl/4, 3*cl/4));
+	checkpointPoints.push( new THREE.Vector2 (0, cl));
+	checkpointPoints.push( new THREE.Vector2 (-3*cl/4, 3*cl/4));
+	checkpointPoints.push( new THREE.Vector2 (-cl, 0));
+	checkpointPoints.push( new THREE.Vector2 (-3*cl/4, -3*cl/4));
+	checkpoint_shape = new THREE.Shape(checkpointPoints);
+	checkpoint_geometry = new THREE.ShapeGeometry(checkpoint_shape);
+	checkpointMeshes = [];
+	
+	// SOUND VALUES
+	registered_chords = {};
+	chord_instances = {};
+	chord_sequence = [];
 }
 
-function clearGUIselection() {
-	$("#gui_up").css("color", "white");
-	$("#gui_right").css("color", "white");
-	$("#gui_down").css("color", "white");
-	$("#gui_left").css("color", "white");
-	lastOrientation = null;
-}
-
-function audioSetUp() {
-
-	// REGISTER CHORDS
-	for(var i=0; i<audio_track.preload.length; i++)
-		registerChord(audio_track.preload[i]);
-
-	// CALCULATE PHYSICAL TRACK DISTANCE
-	physical_track.length = parseFloat(audio_track.info.trackLength)  * SHIP_SPEED * SPEED_MODIFIER;
-	
-	// CREATE A LIST OF ALL CHORDS
-	var trackPercent = 0;
-	for(var i=0; i<audio_track.sections.length; i++) {
-		allCheckpointValues.push([]);
-		for(var k=0; k<audio_track.sections[i].iterations; k++) {
-			for(var j=0; j<audio_track.sections[i].chords.length; j++) {
-				var temp_chord = audio_track.sections[i].chords[j];
-				chord_sequence.push(temp_chord);
-				if(temp_chord.checkpoint == "true") {
-					
-					var startProcent = (trackPercent + parseFloat(temp_chord.checkpoint_offset_time)) * SHIP_SPEED * SPEED_MODIFIER;
-					if(startProcent >= tube.parameters.path.getLength())
-						startProcent -= tube.parameters.path.getLength();
-					startProcent /= tube.parameters.path.getLength();
-	
-					var endProcent = (trackPercent + parseFloat(temp_chord.checkpoint_offset_time) + parseFloat(temp_chord.checkpoint_duration_time)) * SHIP_SPEED * SPEED_MODIFIER;		
-					if(endProcent >= tube.parameters.path.getLength())
-						endProcent -= tube.parameters.path.getLength();
-					endProcent /= tube.parameters.path.getLength();
-					
-					physical_track.checkpoints.push({ sectionId: i, startProcent: startProcent, endProcent: endProcent,  value: temp_chord.type });
-					
-					if(k == 0) {
-						if(allCheckpointValues[i].indexOf(temp_chord.name) == -1) 
-							allCheckpointValues[i].push({name: temp_chord.name, value: temp_chord.type, orientation: null});				
-					}
-				}
-				
-				trackPercent += parseFloat(temp_chord.time_duration);
-				
-			}
-		}
-	}
-};
-
-// initialization
+//initialization
 function initGame(screenWidth, screenHeight, generatedTrack) {
+	initGameValues();
 	clock.start();
 	
 	// SET UP SCREEN SIZE
@@ -207,9 +152,50 @@ function initGame(screenWidth, screenHeight, generatedTrack) {
 	setupShaders();
 
 	window.addEventListener( 'resize', onWindowResize, false );
-
-
 }
+
+function audioSetUp() {
+	// REGISTER CHORDS
+	for(var i=0; i<audio_track.preload.length; i++)
+		registerChord(audio_track.preload[i]);
+
+	// CALCULATE PHYSICAL TRACK DISTANCE
+	physical_track.length = parseFloat(audio_track.info.trackLength)  * SHIP_SPEED * SPEED_MODIFIER;
+	
+	// CREATE A LIST OF ALL CHORDS
+	var trackPercent = 0;
+	for(var i=0; i<audio_track.sections.length; i++) {
+		allCheckpointValues.push([]);
+		for(var k=0; k<audio_track.sections[i].iterations; k++) {
+			for(var j=0; j<audio_track.sections[i].chords.length; j++) {
+				var temp_chord = audio_track.sections[i].chords[j];
+				chord_sequence.push(temp_chord);
+				if(temp_chord.checkpoint == "true") {
+					
+					var startProcent = (trackPercent + parseFloat(temp_chord.checkpoint_offset_time)) * SHIP_SPEED * SPEED_MODIFIER;
+					if(startProcent >= tube.parameters.path.getLength())
+						startProcent -= tube.parameters.path.getLength();
+					startProcent /= tube.parameters.path.getLength();
+	
+					var endProcent = (trackPercent + parseFloat(temp_chord.checkpoint_offset_time) + parseFloat(temp_chord.checkpoint_duration_time)) * SHIP_SPEED * SPEED_MODIFIER;		
+					if(endProcent >= tube.parameters.path.getLength())
+						endProcent -= tube.parameters.path.getLength();
+					endProcent /= tube.parameters.path.getLength();
+					
+					physical_track.checkpoints.push({ sectionId: i, startProcent: startProcent, endProcent: endProcent,  value: temp_chord.type });
+					
+					if(k == 0) {
+						if(allCheckpointValues[i].indexOf(temp_chord.name) == -1) 
+							allCheckpointValues[i].push({name: temp_chord.name, value: temp_chord.type, orientation: null});				
+					}
+				}
+				
+				trackPercent += parseFloat(temp_chord.time_duration);
+				
+			}
+		}
+	}
+};
 
 function setupShaders() {
 
@@ -289,17 +275,6 @@ function createSpaceShip() {
 	});
 }
 
-function onWindowResize() {
-	
-	cameraShip.aspect = gameRenderWidth / gameRenderHeight;
-	cameraShip.updateProjectionMatrix();
-
-	renderer.setSize( gameRenderWidth, gameRenderHeight );
-
-	render();
-
-}
-
 function generateChekpointValues() {
 	var randomValues = [];
 	for(var i=0; i < allCheckpointValues[currentSectionId].length; i++) {
@@ -329,8 +304,80 @@ function add_n_chekpoints(start, n) {
 	}
 }
 
-var currentDurration = 0;
-var pos = 0;
+// SCREEN COMMANDS
+document.body.addEventListener("keydown", function( event ) {
+	switch (event.keyCode) {
+	    case 32: isPause = !isPause; 
+    			 toggleGameMenu();
+	    		 if(!isPause) {
+	    			 if(drawCt == 1) {
+	    				 $("#startLabel").css("display", "none");
+	    				 $("#exitToMenuBtn").css("display", "block");
+	    			 }
+	    			 clock.start();
+	    			 requestAnimationFrame( animate );
+	    			 resumeChord(currentChord);
+	    		 }
+	    		 else {
+	    			 clock.stop();
+	    			 pauseChord(currentChord);
+	    		 }
+	    		 break;
+		//case 70: THREEx.FullScreen.request(); break;
+		//case 71: glitch = !glitch; setupShaders(); break;
+	}
+}, false);
+
+function toggleGameMenu() {
+	if(isPause)
+		$("#gameMenu").css("display", "block");
+	else
+		$("#gameMenu").css("display", "none");
+}
+
+function displayGUI() {
+	$("#gui").css("display", "block");
+}
+
+function clearGUIvalues() {
+	$("#gui_up").text("");
+	$("#gui_right").text("");
+	$("#gui_down").text("");
+	$("#gui_left").text("");
+}
+
+function setGUIvalues(up, right, down, left) {
+	for(var i=0; i < allCheckpointValues[currentSectionId].length; i++) {
+		var checkP = allCheckpointValues[currentSectionId][i];
+		$("#gui_" + checkP.orientation).text(String(checkP.value));
+	}
+}
+
+function colorGUIselection() {
+	if(lastOrientation == orientation)
+		return;
+	
+	$("#gui_" + orientation).css("color", "red");
+	lastOrientation = orientation;
+}
+
+function clearGUIselection() {
+	$("#gui_up").css("color", "white");
+	$("#gui_right").css("color", "white");
+	$("#gui_down").css("color", "white");
+	$("#gui_left").css("color", "white");
+	lastOrientation = null;
+}
+
+function onWindowResize() {
+	
+	cameraShip.aspect = gameRenderWidth / gameRenderHeight;
+	cameraShip.updateProjectionMatrix();
+
+	renderer.setSize( gameRenderWidth, gameRenderHeight );
+
+	render();
+}
 
 function animate() {
 	if(!isPause) {
@@ -360,19 +407,6 @@ function animate() {
 	requestAnimationFrame( animate );
 }
 
-function checkPointDistance(point1, point2) {
-	return Math.sqrt( Math.pow((point2.x - point1.x), 2) + Math.pow((point2.y - point1.y), 2) + Math.pow((point2.z - point1.z), 2) );
-}
-
-var drawCt = 0;
-var colorIndex = 48;
-var currentPick = 0;
-var pick;
-var orientation = null;
-var lastOrientation = null;
-
-var glitchCt = 0;
-var bloomCt = 0;
 // render loop 
 function render(delta_t) {
 	
@@ -382,6 +416,7 @@ function render(delta_t) {
 	if(drawCt == 0) {
 		isPause = true;
 		displayGUI();
+		$("#gameMenu").css("display", "block");
 		ship_traveled =  shipStartProcent * tube.parameters.path.getLength();
 	}
 	

@@ -330,6 +330,25 @@ ChordBrah.controller("editorController", function($rootScope, $scope, $compile) 
 	$scope.clearEditor();
 });
 
+ChordBrah.controller("gameMenuController", function($rootScope, $scope) {
+	$scope.exitToMenu = function() {
+		// close game menu
+		$("#gameMenu").css("display", "none");
+		$("#startLabel").css("display", "block");
+		$("#exitToMenuBtn").css("display", "none");
+		
+		// do scene cleanup
+		clearScene();
+		
+		// do audio cleanup
+		
+		$("#container").empty();
+		
+		// change to main menu
+		$rootScope.$broadcast("changeView", "menuView");	
+	};
+});
+
 $(document).ready(function() {
 	init_screen();
 });
