@@ -121,3 +121,21 @@ function stopChord(chordName) {
 	for(var i=0; i<chord.length; i++)
 		createjs.Sound.stop(chord[i]);
 }
+
+function soundInstanceCleanup() {
+	/*for (var key in registered_chords) {
+		if (registered_chords.hasOwnProperty(key)) {
+			var notes = registered_chords[key];
+			for(var i=0; i < notes.length; i++)
+				console.log(notes[i]);//notes[i]._cleanUp();
+			console.log("Cleaned :"+i+" instances");
+		}
+	}
+	
+	for (var key in chord_instances) {
+		if (chord_instances.hasOwnProperty(key)) {
+			chord_instances[key]._cleanUp();
+			console.log("Cleaned an instance");
+		}
+	}*/
+}

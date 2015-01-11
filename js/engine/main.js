@@ -154,6 +154,35 @@ function initGame(screenWidth, screenHeight, generatedTrack) {
 	window.addEventListener( 'resize', onWindowResize, false );
 }
 
+function generateChekpointValues() {
+	var randomValues = [];
+	for(var i=0; i < allCheckpointValues[currentSectionId].length; i++) {
+		var rand = Math.floor((Math.random() * 30) + 1);
+		while(randomValues.indexOf(rand) > -1)
+			rand = Math.floor((Math.random() * 30) + 1);
+		
+		randomValues.push({ind: i, val: rand});
+	}
+	
+	randomValues.sort(function(a, b){return a.val-b.val});
+
+	for(var i=0; i < randomValues.length; i++) {
+		switch(i) {
+			case 0: allCheckpointValues[currentSectionId][randomValues[i].ind].orientation = "right"; break;
+			case 1: allCheckpointValues[currentSectionId][randomValues[i].ind].orientation = "left"; break;
+			case 2: allCheckpointValues[currentSectionId][randomValues[i].ind].orientation = "up"; break;
+			case 3: allCheckpointValues[currentSectionId][randomValues[i].ind].orientation = "down"; break;
+		}
+	}
+}
+
+function add_n_chekpoints(start, n) {
+	for(var i = start; i < start + n && i < physical_track.checkpoints.length; i++) {
+		addCheckpoint(physical_track.checkpoints[i].startProcent, physical_track.checkpoints[i].endProcent);
+		checkpointAddingIndex++;
+	}
+}
+
 function audioSetUp() {
 	// REGISTER CHORDS
 	for(var i=0; i<audio_track.preload.length; i++)
@@ -185,9 +214,17 @@ function audioSetUp() {
 					physical_track.checkpoints.push({ sectionId: i, startProcent: startProcent, endProcent: endProcent,  value: temp_chord.type });
 					
 					if(k == 0) {
-						if(allCheckpointValues[i].indexOf(temp_chord.name) == -1) 
-							allCheckpointValues[i].push({name: temp_chord.name, value: temp_chord.type, orientation: null});				
-					}
+						var found = false;
+						for(var x = 0; x < allCheckpointValues[i].length; x++) {
+							if(allCheckpointValues[i][x].value == temp_chord.type) {
+								found = true;
+								break;
+							}
+						}
+						
+						if(!found)
+							allCheckpointValues[i].push({name: temp_chord.name, value: temp_chord.type, orientation: null});								
+					}					
 				}
 				
 				trackPercent += parseFloat(temp_chord.time_duration);
@@ -195,6 +232,7 @@ function audioSetUp() {
 			}
 		}
 	}
+	console.log(allCheckpointValues[2]);
 };
 
 function setupShaders() {
@@ -273,35 +311,6 @@ function createSpaceShip() {
 		
 		animate(); 
 	});
-}
-
-function generateChekpointValues() {
-	var randomValues = [];
-	for(var i=0; i < allCheckpointValues[currentSectionId].length; i++) {
-		var rand = Math.floor((Math.random() * 30) + 1);
-		while(randomValues.indexOf(rand) > -1)
-			rand = Math.floor((Math.random() * 30) + 1);
-		
-		randomValues.push({ind: i, val: rand});
-	}
-	
-	randomValues.sort(function(a, b){return a.val-b.val});
-
-	for(var i=0; i < randomValues.length; i++) {
-		switch(i) {
-			case 0: allCheckpointValues[currentSectionId][randomValues[i].ind].orientation = "right"; break;
-			case 1: allCheckpointValues[currentSectionId][randomValues[i].ind].orientation = "left"; break;
-			case 2: allCheckpointValues[currentSectionId][randomValues[i].ind].orientation = "up"; break;
-			case 3: allCheckpointValues[currentSectionId][randomValues[i].ind].orientation = "down"; break;
-		}
-	}
-}
-
-function add_n_chekpoints(start, n) {
-	for(var i = start; i < start + n && i < physical_track.checkpoints.length; i++) {
-		addCheckpoint(physical_track.checkpoints[i].startProcent, physical_track.checkpoints[i].endProcent);
-		checkpointAddingIndex++;
-	}
 }
 
 // SCREEN COMMANDS
@@ -422,7 +431,7 @@ function render(delta_t) {
 	
 	if(ship_traveled > tube.parameters.path.getLength()) {
 		ship_traveled = 0;
-		colorIndex = 32;
+		colorIndex = 16;
 		startAudio = true;
 	}
 	
