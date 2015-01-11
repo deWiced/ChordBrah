@@ -190,6 +190,7 @@ function disposeObject(obj)
             {
                 for (i = 0; i < obj.material.materials.length; i++)
                 {
+                	if(obj.material.materials[i] != null || obj.material.materials[i] != undefined)
                     obj.material.materials[i].dispose();
                 }
             }

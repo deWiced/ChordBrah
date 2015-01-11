@@ -188,9 +188,6 @@ function audioSetUp() {
 	for(var i=0; i<audio_track.preload.length; i++)
 		registerChord(audio_track.preload[i]);
 
-	// CALCULATE PHYSICAL TRACK DISTANCE
-	physical_track.length = parseFloat(audio_track.info.trackLength)  * SHIP_SPEED * SPEED_MODIFIER;
-	
 	// CREATE A LIST OF ALL CHORDS
 	var trackPercent = 0;
 	for(var i=0; i<audio_track.sections.length; i++) {
@@ -215,15 +212,16 @@ function audioSetUp() {
 					
 					if(k == 0) {
 						var found = false;
+						var type_temp = temp_chord.type.split(" ");
 						for(var x = 0; x < allCheckpointValues[i].length; x++) {
-							if(allCheckpointValues[i][x].value == temp_chord.type) {
+							if(allCheckpointValues[i][x].value == type_temp[0]) {
 								found = true;
 								break;
 							}
 						}
 						
 						if(!found)
-							allCheckpointValues[i].push({name: temp_chord.name, value: temp_chord.type, orientation: null});								
+							allCheckpointValues[i].push({name: temp_chord.name, value: type_temp[0], orientation: null});								
 					}					
 				}
 				
@@ -232,7 +230,6 @@ function audioSetUp() {
 			}
 		}
 	}
-	console.log(allCheckpointValues[2]);
 };
 
 function setupShaders() {
@@ -473,15 +470,17 @@ function render(delta_t) {
 	// check if we are at current checkpoint end
 	if(startAudio && currentCheckpoint != null && t - currentCheckpoint.endProcent >= 0 && t - currentCheckpoint.endProcent <= 0.1) {
 		// get the correct answer
-		var correctOrientation = [];		
+		var correctOrientation;		
+		var value_temp = currentCheckpoint.value.split(" "); 
 		for(var i = 0; i < allCheckpointValues[currentSectionId].length; i++) {
-			if(allCheckpointValues[currentSectionId][i].value == currentCheckpoint.value) {
-				correctOrientation.push(allCheckpointValues[currentSectionId][i].orientation);
+			if(allCheckpointValues[currentSectionId][i].value == value_temp[0]) {
+				correctOrientation = allCheckpointValues[currentSectionId][i].orientation;
+				break;
 			}
 		}		
 
 		// check user answer
-		if(correctOrientation.indexOf(orientation) > -1) {
+		if(correctOrientation == orientation) {
 			// smth
 		}
 		else {

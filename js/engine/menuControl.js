@@ -224,9 +224,6 @@ ChordBrah.controller("editorController", function($rootScope, $scope, $compile) 
 				{
 					name: $("#nameInput").val(),
 					tempo: $("#tempoInput").val(),
-					timeSigniature: $("#timeSigniatureInput").val(),
-					numBars: $("#lengthInput").val(),
-					length: wholeNoteDuration * $("#lengthInput").val()
 				},
 			preload: preload,
 			noteDurations: noteDurations,
@@ -252,9 +249,7 @@ ChordBrah.controller("editorController", function($rootScope, $scope, $compile) 
 
 		$("#nameInput").val("");
 		$("#tempoInput").val("");
-		$("#timeSigniatureInput").val("");
-		$("#lengthInput").val("");
-		
+	
 		$scope.chordIds = [];
 	};
 	
@@ -262,8 +257,6 @@ ChordBrah.controller("editorController", function($rootScope, $scope, $compile) 
 		// Track info
 		$("#nameInput").val(track.info.name);
 		$("#tempoInput").val(track.info.tempo);
-		$("#timeSigniatureInput").val(track.info.timeSigniature);
-		$("#lengthInput").val(track.info.numBars);
 
 		// Track sections
 		for(var i=0; i<track.sections.length; i++) {
@@ -332,6 +325,9 @@ ChordBrah.controller("editorController", function($rootScope, $scope, $compile) 
 
 ChordBrah.controller("gameMenuController", function($rootScope, $scope) {
 	$scope.exitToMenu = function() {
+		// close GUI
+		$("#gui").css("display", "none");
+		
 		// close game menu
 		$("#gameMenu").css("display", "none");
 		$("#startLabel").css("display", "block");
