@@ -88,12 +88,24 @@ function setScale( scale) {
 
 }
 
+var checkpointPoints = [];
+var cl = 600;
+checkpointPoints.push( new THREE.Vector2 (0, -cl));
+checkpointPoints.push( new THREE.Vector2 (3*cl/4, -3*cl/4));
+checkpointPoints.push( new THREE.Vector2 (cl, 0 ));
+checkpointPoints.push( new THREE.Vector2 (3*cl/4, 3*cl/4));
+checkpointPoints.push( new THREE.Vector2 (0, cl));
+checkpointPoints.push( new THREE.Vector2 (-3*cl/4, 3*cl/4));
+checkpointPoints.push( new THREE.Vector2 (-cl, 0));
+checkpointPoints.push( new THREE.Vector2 (-3*cl/4, -3*cl/4));
+var checkpoint_shape = new THREE.Shape(checkpointPoints);
+var checkpoint_geometry = new THREE.ShapeGeometry(checkpoint_shape);
+
 var checkpointMeshes = [];
 
 function addCheckpoint(startP, endP) {
 	// add start
-	var checkpoint_geometry = new THREE.PlaneBufferGeometry(2000, 1000);
-	var checkpoint_material = new THREE.MeshBasicMaterial({color: 0x00CC00, transparent: true, opacity: 0.3 });
+	var checkpoint_material = new THREE.MeshBasicMaterial({color: 0x00CC00, transparent: true, opacity: 0.7 });
 	checkpoint_material.side = THREE.DoubleSide;
 	var checkpoint_mesh = new THREE.Mesh(checkpoint_geometry, checkpoint_material);
 	var point = tube.parameters.path.getPointAt(startP);
@@ -105,10 +117,9 @@ function addCheckpoint(startP, endP) {
 	checkpointMeshes.push(checkpoint_mesh);
 	
 	// add end
-	var checkpoint_geometry_end = new THREE.PlaneBufferGeometry(2000, 1000);
-	var checkpoint_material_end = new THREE.MeshBasicMaterial({color: 0xFF0066, transparent: true, opacity: 0.3 });
+	var checkpoint_material_end = new THREE.MeshBasicMaterial({color: 0xFF0066, transparent: true, opacity: 0.7 });
 	checkpoint_material_end.side = THREE.DoubleSide;
-	var checkpoint_mesh_end = new THREE.Mesh(checkpoint_geometry_end, checkpoint_material_end);
+	var checkpoint_mesh_end = new THREE.Mesh(checkpoint_geometry, checkpoint_material_end);
 	point = tube.parameters.path.getPointAt(endP);
 	
 	checkpoint_mesh_end.position.set(point.x, point.y, point.z);
