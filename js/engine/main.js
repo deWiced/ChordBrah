@@ -322,25 +322,29 @@ function createSpaceShip() {
 // SCREEN COMMANDS
 document.body.addEventListener("keydown", function( event ) {
 	switch (event.keyCode) {
-	    case 32: isPause = !isPause; 
-    			 toggleGameMenu();
-	    		 if(!isPause) {
-	    			 if(drawCt == 1) {
-	    				 $("#startLabel").css("display", "none");
-	    				 $("#actionLabel").css("display", "block");
-	    				 $("#scoreLabel").css("display", "block");
-	    				 $("#totalCheckpoints").css("display", "block");
-	    				 $("#exitToMenuBtn").css("display", "block");
-	    			 }
-	    			 clock.start();
-	    			 requestAnimationFrame( animate );
-	    			 resumeChord(currentChord);
-	    		 }
-	    		 else {
-	    			 clock.stop();
-	    			 pauseChord(currentChord);
-	    		 }
-	    		 break;
+	    case 32: 
+	    	if($("#container").css("display") == "none")
+	    		break;
+	    	
+			 isPause = !isPause; 
+			 toggleGameMenu();
+    		 if(!isPause) {
+    			 if(drawCt == 1) {
+    				 $("#startLabel").css("display", "none");
+    				 $("#actionLabel").css("display", "block");
+    				 $("#scoreLabel").css("display", "block");
+    				 $("#totalCheckpoints").css("display", "block");
+    				 $("#exitToMenuBtn").css("display", "block");
+    			 }
+    			 clock.start();
+    			 requestAnimationFrame( animate );
+    			 resumeChord(currentChord);
+    		 }
+    		 else {
+    			 clock.stop();
+    			 pauseChord(currentChord);
+    		 }
+    		 break;
 		//case 70: THREEx.FullScreen.request(); break;
 		//case 71: glitch = !glitch; setupShaders(); break;
 	}

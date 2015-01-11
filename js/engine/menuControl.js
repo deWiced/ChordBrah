@@ -90,6 +90,7 @@ ChordBrah.controller("editorController", function($rootScope, $scope, $compile) 
 	$scope.generatedTrack;
 	$scope.sectionId = 0;
 	$scope.chordIds = [];
+	$scope.sectionsCheckpointRestrictions = [];
 	
 	$scope.root_insert_HTML = "";
 	for(var key in ROOT_NOTES)
@@ -251,6 +252,7 @@ ChordBrah.controller("editorController", function($rootScope, $scope, $compile) 
 		$("#tempoInput").val("");
 	
 		$scope.chordIds = [];
+		$scope.sectionsCheckpointRestrictions = [];
 	};
 	
 	$scope.displayTrack = function(track) {

@@ -43,13 +43,18 @@ body {
 	font-family: 'Love Ya Like A Sister', cursive;
 }
 
-#menu button:hover {
-	text-decoration: underline;
+#menu button:hover{
 	cursor: pointer;
 }
 
+#editorBtn:hover, 
+#optionsBtn:hover {
+	text-decoration: underline;
+}
 
-
+#mainPlayBtn {
+	text-decoration: line-through;
+}
 
 /* Editor style */
 
@@ -239,42 +244,41 @@ label {
 }
 
 #gui_up, #gui_left, #gui_right, #gui_down {
+	position: absolute;
 	margin: 0px;
 	font-size: 22px;
 	color: white;
 }
 
 #gui_up, #gui_down {
- 	position: relative;
  	display: block;
  	clear: both;
  	text-align: center;
+ 	width: 100%;
 }
 
 #gui_left, #gui_right {
-	position: relative;
 	display: block;
-	top: 42px;
-	margin-left: 5px;
-	margin-right: 5px;
-	float: left;
-}
-
-#gui_left {
+	top: 82px;
 	width: 130px;
 }
 
+#gui_left {	
+	left: 5px;
+	text-align: right;
+}
+
 #gui_right {
-	right: -120px;
+	right: 5px;
+	text-align: left;
 }
 
 #gui_up {
-	margin-top: 10px;
-	margin-bottom: 5px;
+	top: 5px;
 }
 
 #gui_down {
-	bottom: -90px;
+	bottom: 5px;
 }
 
 #arrowImg {
