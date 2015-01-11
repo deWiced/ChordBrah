@@ -97,8 +97,9 @@ function addCheckpoint(startP, endP) {
 	checkpoint_material.side = THREE.DoubleSide;
 	var checkpoint_mesh = new THREE.Mesh(checkpoint_geometry, checkpoint_material);
 	var point = tube.parameters.path.getPointAt(startP);
+	
 	checkpoint_mesh.position.set(point.x, point.y, point.z);
-	checkpoint_mesh.rotation.x = Math.PI / 2;
+	rotateCheckpoint(startP, checkpoint_mesh);
 	
 	scene.add(checkpoint_mesh);
 	checkpointMeshes.push(checkpoint_mesh);
@@ -109,11 +110,37 @@ function addCheckpoint(startP, endP) {
 	checkpoint_material_end.side = THREE.DoubleSide;
 	var checkpoint_mesh_end = new THREE.Mesh(checkpoint_geometry_end, checkpoint_material_end);
 	point = tube.parameters.path.getPointAt(endP);
+	
 	checkpoint_mesh_end.position.set(point.x, point.y, point.z);
-	checkpoint_mesh_end.rotation.x = Math.PI / 2;
+	rotateCheckpoint(endP, checkpoint_mesh_end);
 	
 	scene.add(checkpoint_mesh_end);
 	checkpointMeshes.push(checkpoint_mesh_end);
+}
+
+function rotateCheckpoint(posP, mesh) {
+	// interpolation
+	var segments_temp = tube.tangents.length;
+	var pickt_temp = posP * segments_temp ;
+	var pick_temp  = Math.floor( pickt_temp  );
+	var pickNext_temp = ( pick_temp  + 1 ) % segments_temp ;
+	
+	var binormal_temp = new THREE.Vector3(), normal_temp = new THREE.Vector3();
+	binormal_temp.subVectors( tube.binormals[ pickNext_temp ], tube.binormals[ pick_temp ] );
+	binormal_temp.multiplyScalar( pickt_temp - pick_temp ).add( tube.binormals[ pick_temp ] );
+
+	var dir_temp = tube.parameters.path.getTangentAt( posP );
+	normal_temp.copy( binormal_temp ).cross( dir_temp );
+
+	var target_temp = new Target();
+	target_temp.update(mesh.position, normal_temp);
+	mesh.position.copy( target_temp.position );
+	
+	var lookAt_temp = tube.parameters.path.getPointAt( ( posP + 30 / tube.parameters.path.getLength() ) % 1 ).multiplyScalar( scale );
+	lookAt_temp.copy(mesh.position).sub( dir_temp );
+	
+	mesh.matrix.lookAt(mesh.position, lookAt_temp, target_temp.normal);
+	mesh.rotation.setFromRotationMatrix( mesh.matrix, mesh.rotation.order );
 }
 
 function removeCheckpoint() {
