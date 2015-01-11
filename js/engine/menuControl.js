@@ -332,6 +332,10 @@ ChordBrah.controller("gameMenuController", function($rootScope, $scope) {
 		$("#gameMenu").css("display", "none");
 		$("#startLabel").css("display", "block");
 		$("#exitToMenuBtn").css("display", "none");
+		$("#actionLabel").css("display", "none");
+		$("#actionLabel").text("Paused");
+		$("#scoreLabel").css("display", "none");
+		$("#totalCheckpoints").css("display", "none");
 		
 		// do audio cleanup
 		soundInstanceCleanup();

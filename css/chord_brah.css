@@ -306,28 +306,53 @@ label {
  	margin: 0;
  }
  
- #startLabel, #exitToMenuBtn {
+ 
+ #actionLabel, #startLabel, #exitToMenuBtn, #scoreLabel, #totalCheckpoints {
     position: absolute;
- 	font-size: 62px;
     display: block;
-    text-align: center;
-    top: 40%;
+    text-align: center; 
+ }
+ 
+ #actionLabel, #scoreLabel, #totalCheckpoints, #exitToMenuBtn {
+ 	display: none;
+ }
+ 
+ #actionLabel {
+ 	width: 100%;
+ 	top: 15%;
+ 	font-size: 76px;
  }
  
  #startLabel {
  	width: 100%;
+ 	top: 60%;
+ 	font-size: 62px;
+ }
+ 
+ #scoreLabel, #totalCheckpoints{
+ 	width: 100%;
+ 	font-size: 48px;
+ }
+ 
+ #scoreLabel {
+ 	top: 35%;
+ }
+ 
+ #totalCheckpoints {
+ 	top: 40%;
  }
  
  #exitToMenuBtn {
+ 	font-size: 62px;
  	color: white;
  	font-family: 'Love Ya Like A Sister', cursive;
- 	display: none;
  	cursor: pointer;
- 	left: 32%;
+ 	left: 33%;
  	border: none;
  	background: transparent;
  	border-radius: 25px;
  	padding: 10px 20px;
+ 	top: 60%;
  }
  
  #exitToMenuBtn:HOVER {

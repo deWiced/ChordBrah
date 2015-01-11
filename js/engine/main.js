@@ -22,12 +22,13 @@ var SHIP_SPEED, SPEED_MODIFIER, ship_traveled;
 var physical_track;
 var isPause;
 var currentChord, currentDurration;
-var currentCheckpointIndex, currentCheckpoint, checkpointAddingIndex, currentSectionId, allCheckpointValues;
+var currentCheckpointIndex, currentCheckpoint, checkpointAddingIndex, currentSectionId, allCheckpointValues, correctAnswers;
 var startAudio;
 var drawCt;
 var colorIndex;
 var currentPick, pick;
 var orientation, lastOrientation;
+var scoreText, allChekpointsText;
 
 var dirtyIndexes;
 var coloredMaterial, invisibleMaterail, materials;
@@ -59,12 +60,15 @@ function initGameValues() {
 	checkpointAddingIndex = 0;
 	currentSectionId = 0;
 	allCheckpointValues = [];
+	correctAnswers = 0;
 	startAudio = false;
 	drawCt = 0;
 	colorIndex = 48;
 	currentPick = 0;
 	orientation = null;
 	lastOrientation = null; 
+	scoreText = "Current score: ";
+	allChekpointsText = "Number of all checkpoints: ";
 	
 	// TRACK VALUES
 	dirtyIndexes = [];
@@ -230,6 +234,11 @@ function audioSetUp() {
 			}
 		}
 	}
+	
+	// score label setup
+	$("#scoreLabel").text(scoreText + "0 / 0");
+	$("#totalCheckpoints").text(allChekpointsText + physical_track.checkpoints.length);
+	
 };
 
 function setupShaders() {
@@ -318,6 +327,9 @@ document.body.addEventListener("keydown", function( event ) {
 	    		 if(!isPause) {
 	    			 if(drawCt == 1) {
 	    				 $("#startLabel").css("display", "none");
+	    				 $("#actionLabel").css("display", "block");
+	    				 $("#scoreLabel").css("display", "block");
+	    				 $("#totalCheckpoints").css("display", "block");
 	    				 $("#exitToMenuBtn").css("display", "block");
 	    			 }
 	    			 clock.start();
@@ -335,7 +347,7 @@ document.body.addEventListener("keydown", function( event ) {
 }, false);
 
 function toggleGameMenu() {
-	if(isPause)
+	if($("#gameMenu").css("display") == "none")
 		$("#gameMenu").css("display", "block");
 	else
 		$("#gameMenu").css("display", "none");
@@ -481,7 +493,7 @@ function render(delta_t) {
 
 		// check user answer
 		if(correctOrientation == orientation) {
-			// smth
+			correctAnswers++;
 		}
 		else {
 			glitch = true;
@@ -498,6 +510,10 @@ function render(delta_t) {
 		
 		currentCheckpointIndex++;
 		if(currentCheckpointIndex < physical_track.checkpoints.length) {
+			
+			// update score
+			$("#scoreLabel").text(scoreText + correctAnswers + " / " + String(currentCheckpointIndex));
+			
 			currentCheckpoint = physical_track.checkpoints[currentCheckpointIndex];
 			if(currentSectionId < currentCheckpoint.sectionId) {
 				currentSectionId++;
@@ -506,11 +522,16 @@ function render(delta_t) {
 				setGUIvalues();
 			}
 		}
+				
 		else {
+			// show ending screen
+			$("#scoreLabel").text("Total score: " + correctAnswers + " / " + String(currentCheckpointIndex));
+			$("#totalCheckpoints").css("display", "none");
+			$("#actionLabel").text("Game Over!");
 			currentCheckpoint = null;
 			currentCheckpointIndex = -1;
+			toggleGameMenu();
 		}
-		
 	}
 	
 	binormal.subVectors( tube.binormals[ pickNext ], tube.binormals[ pick ] );
