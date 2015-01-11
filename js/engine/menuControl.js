@@ -355,4 +355,3 @@ ChordBrah.controller("gameMenuController", function($rootScope, $scope) {
 $(document).ready(function() {
 	init_screen();
 });
-
