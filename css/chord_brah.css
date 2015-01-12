@@ -155,6 +155,7 @@ label {
 	border: 0px;
 	float: right;
 	right: 50px;
+	display: none;
 }
 
 #openFileBtn-label {
