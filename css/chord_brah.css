@@ -1,0 +1,368 @@
+@CHARSET "UTF-8";
+
+body {
+	 margin: 0; 
+}
+
+#wrapper {
+	background: url("../img/wallpaper/option_2.jpg");
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+
+#container, #editor, #menu, #options, #songSelect {
+	overflow: auto;
+	width: 100%; 
+	height: 100%; 
+	font-family: 'Love Ya Like A Sister', cursive;
+} 
+
+#logo {
+	position: relative;
+	color: white;
+	float: none;
+	display: block;
+	margin: 180px auto 80px auto;
+	font-size: 54px;
+	text-align: center;
+}
+
+#menu button {
+	border: none;
+	color: white;
+	background: transparent;
+	float: none;
+	width: 20%;
+	height: 8%;
+	font-size: 32px;
+	display: block;
+	text-align: center;
+	margin: 20px auto;
+	font-family: 'Love Ya Like A Sister', cursive;
+}
+
+#menu button:hover{
+	cursor: pointer;
+}
+
+#editorBtn:hover, 
+#optionsBtn:hover {
+	text-decoration: underline;
+}
+
+#mainPlayBtn {
+	text-decoration: line-through;
+}
+
+/* Editor style */
+
+.navigation {
+	margin-top: 30px;
+}
+
+.navigation button {
+	margin-left: 28%;
+	border: none;
+	background: transparent;
+	color: white;
+	font-family: 'Love Ya Like A Sister', cursive;
+	font-size: 22px;
+}
+
+.navigation button:hover {
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.navigation  label {
+	margin-left: 10px;
+	color: white;
+	font-family: 'Love Ya Like A Sister', cursive;
+	font-size: 34px;
+}
+
+.cord_brah_form {
+	color: white;
+}
+
+.cord_brah_form fieldset:FIRST-CHILD {
+	margin: 40px 20px 10px 20px;
+}
+
+.cord_brah_form fieldset {
+	margin: 0px 20px 10px 20px;
+	background: rgba(1,1,1,0.2);
+}
+
+.cord_brah_form input[type="text"] {
+	margin-left: 10px;
+	color: #E64016;
+	background: transparent;
+    border:0;
+    border-bottom: 1px solid white;
+    width: 100px;
+    text-align: center;
+}
+
+.cord_brah_form input[type="text"]:FOCUS,
+.cord_brah_form input[type="file"]:FOCUS,
+.cord_brah_form button:FOCUS,
+#menu button,
+.navigation button, 
+.cord_brah_form select {
+	outline: 0;
+}
+
+#container {
+	width: 100%; 
+	height: 100%;
+	overflow: hidden;
+}
+
+label {
+	margin-left: 50px;
+	text-align: right;
+	font-size: 14px;
+}
+
+.cord_brah_form button {
+	border: none;
+	color: white;
+	font-family: 'Love Ya Like A Sister', cursive;
+	cursor: pointer;
+	background-color: transparent;
+	font-size: 16px;
+}
+
+.cord_brah_form button:hover,
+.cord_brah_form a:hover {
+	background-color: #E64016;
+}
+
+.cord_brah_form a, .cord_brah_form a:VISITED {
+	text-decoration: none;
+	color: white;
+	font-size: 16px;
+	padding: 2px 6px 2px 6px;
+}
+
+#openFileBtn {
+	position: relative;
+	height: 0px;
+	width: 0px;
+	border: 0px;
+	float: right;
+	right: 50px;
+}
+
+#openFileBtn-label {
+	padding-right: 5px;
+	border: none;
+	cursor: pointer;
+	font-size: 16px;	
+	display: inline-block;
+	float: right;
+	margin-right: 20px;
+	width: 40px;
+}
+
+#openFileBtn-label:hover {
+	background-color: #E64016;
+}
+
+.addChordBtn,
+.removeChordBtn {
+	margin-top: 20px;
+}
+
+.addChordBtn {
+	margin-left: 60px;
+}
+
+.removeChordBtn {
+	margin-left: 20px;
+}
+
+.cord_brah_form select {
+	background-color: transparent;
+	color: #E64016;
+	border: none;
+}
+
+.cord_brah_form select::AFTER {
+	border-top-color: white !important;
+}
+
+#optionsApplyBtn {
+	margin-top: 20px;
+	margin-right: 40px;
+	float: right;
+}
+
+
+/*   Song selection style */
+
+#songSelection {
+	overflow: auto; 
+	font-family: 'Love Ya Like A Sister', cursive;
+	margin-left: 10%;
+	margin-top: 5%;
+	width: 80%;
+	height: 70%;
+}
+
+.song {
+	margin: 20px 30px 20px 30px;
+	float: left;
+	width: 220px;
+	height: 300px;
+	background: url("../img/other/polaroid.png") center no-repeat;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+
+.song label {
+	position: relative;
+	top: 120px;
+	left: 20px;
+	font-size: 32px;
+	color: white;
+}
+
+
+
+/* GUI STYLE */
+
+#gui {
+	position: absolute;
+	top: 20px;
+	right: 20px;
+	width: 400px;
+	height: 190px;
+	background:rgba(50,50,50,0.5);
+	display: none;
+}
+
+#gui_up, #gui_left, #gui_right, #gui_down {
+	position: absolute;
+	margin: 0px;
+	font-size: 22px;
+	color: white;
+}
+
+#gui_up, #gui_down {
+ 	display: block;
+ 	clear: both;
+ 	text-align: center;
+ 	width: 100%;
+}
+
+#gui_left, #gui_right {
+	display: block;
+	top: 82px;
+	width: 130px;
+}
+
+#gui_left {	
+	left: 5px;
+	text-align: right;
+}
+
+#gui_right {
+	right: 5px;
+	text-align: left;
+}
+
+#gui_up {
+	top: 5px;
+}
+
+#gui_down {
+	bottom: 5px;
+}
+
+#arrowImg {
+	position: absolute;
+	width: 120px;
+	height: 120px;
+	display: block;
+	float: left;
+	top: 37px;
+	left: 140px;
+ }
+ 
+ 
+ /* In-game menu style */
+ 
+ #gameMenu {
+ 	position: absolute;
+ 	top: 0;
+ 	left: 0;
+ 	width: 100%;
+ 	height: 100%;
+ 	background:rgba(40,40,40,0.7);
+	display: none;
+	color: white;
+	font-family: 'Love Ya Like A Sister', cursive;
+ }
+ 
+ #gameMenu label {
+ 	margin: 0;
+ }
+ 
+ 
+ #actionLabel, #startLabel, #exitToMenuBtn, #scoreLabel, #totalCheckpoints {
+    position: absolute;
+    display: block;
+    text-align: center; 
+ }
+ 
+ #actionLabel, #scoreLabel, #totalCheckpoints, #exitToMenuBtn {
+ 	display: none;
+ }
+ 
+ #actionLabel {
+ 	width: 100%;
+ 	top: 15%;
+ 	font-size: 76px;
+ }
+ 
+ #startLabel {
+ 	width: 100%;
+ 	top: 60%;
+ 	font-size: 62px;
+ }
+ 
+ #scoreLabel, #totalCheckpoints{
+ 	width: 100%;
+ 	font-size: 48px;
+ }
+ 
+ #scoreLabel {
+ 	top: 35%;
+ }
+ 
+ #totalCheckpoints {
+ 	top: 40%;
+ }
+ 
+ #exitToMenuBtn {
+ 	font-size: 62px;
+ 	color: white;
+ 	font-family: 'Love Ya Like A Sister', cursive;
+ 	cursor: pointer;
+ 	left: 33%;
+ 	border: none;
+ 	background: transparent;
+ 	border-radius: 25px;
+ 	padding: 10px 20px;
+ 	top: 60%;
+ }
+ 
+ #exitToMenuBtn:HOVER {
+ 	background-color: #E64016 /*#e7634b*/
+ }
