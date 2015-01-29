@@ -76,17 +76,43 @@ function initGameValues() {
 	invisibleMaterail = new THREE.MeshBasicMaterial({ visible: false });
 	materials = [];
 	checkpointPoints = [];
-	cl = 600;
-	checkpointPoints.push( new THREE.Vector2 (0, -cl));
-	checkpointPoints.push( new THREE.Vector2 (3*cl/4, -3*cl/4));
-	checkpointPoints.push( new THREE.Vector2 (cl, 0 ));
-	checkpointPoints.push( new THREE.Vector2 (3*cl/4, 3*cl/4));
-	checkpointPoints.push( new THREE.Vector2 (0, cl));
-	checkpointPoints.push( new THREE.Vector2 (-3*cl/4, 3*cl/4));
-	checkpointPoints.push( new THREE.Vector2 (-cl, 0));
-	checkpointPoints.push( new THREE.Vector2 (-3*cl/4, -3*cl/4));
+	cl = 1000;
+	inner = 600;
+
+	// outer
+	checkpointPoints.push( new THREE.Vector2 (0,  		-cl));
+	checkpointPoints.push( new THREE.Vector2 (3*cl/4,	-3*cl/4));
+	checkpointPoints.push( new THREE.Vector2 (cl, 		0 ));
+	checkpointPoints.push( new THREE.Vector2 (3*cl/4, 	3*cl/4));
+	checkpointPoints.push( new THREE.Vector2 (0, 		cl));
+	checkpointPoints.push( new THREE.Vector2 (-3*cl/4, 	3*cl/4));
+	checkpointPoints.push( new THREE.Vector2 (-cl, 		0));
+	checkpointPoints.push( new THREE.Vector2 (-3*cl/4,  -3*cl/4));
+	checkpointPoints.push( new THREE.Vector2 (0,  		-cl));
+
+	// inner
+	checkpointPoints.push( new THREE.Vector2 (0,  		-inner));
+	checkpointPoints.push( new THREE.Vector2 (-3*inner/4,  -3*inner/4));
+	checkpointPoints.push( new THREE.Vector2 (-inner, 		0));
+	checkpointPoints.push( new THREE.Vector2 (-3*inner/4, 	3*inner/4));
+	checkpointPoints.push( new THREE.Vector2 (0, 		inner));
+	checkpointPoints.push( new THREE.Vector2 (3*inner/4, 	3*inner/4));
+	checkpointPoints.push( new THREE.Vector2 (inner, 		0 ));
+	checkpointPoints.push( new THREE.Vector2 (3*inner/4,	-3*inner/4));
+	checkpointPoints.push( new THREE.Vector2 (0,  		-inner));
+
 	checkpoint_shape = new THREE.Shape(checkpointPoints);
-	checkpoint_geometry = new THREE.ShapeGeometry(checkpoint_shape);
+	//checkpoint_geometry = new THREE.ShapeGeometry(checkpoint_shape);
+
+	var extrudeSettings = {
+		steps			: 1,
+		amount			: 700,
+		bevelEnabled	: true,
+		bevelThickness  : 50,
+	};
+
+	checkpoint_geometry = new THREE.ExtrudeGeometry(checkpoint_shape, extrudeSettings);
+
 	checkpointMeshes = [];
 	
 	// SOUND VALUES

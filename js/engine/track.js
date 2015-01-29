@@ -81,7 +81,7 @@ function setScale( scale) {
 
 function addCheckpoint(startP, endP) {
 	// add start
-	var checkpoint_material = new THREE.MeshBasicMaterial({color: 0x00CC00, transparent: true, opacity: 0.7 });
+	var checkpoint_material = new THREE.MeshBasicMaterial({color: 0x6D9BF1 /*0x00CC00*/, transparent: true, opacity: 0.7 });
 	checkpoint_material.side = THREE.DoubleSide;
 	var checkpoint_mesh = new THREE.Mesh(checkpoint_geometry, checkpoint_material);
 	var point = tube.parameters.path.getPointAt(startP);
@@ -93,7 +93,7 @@ function addCheckpoint(startP, endP) {
 	checkpointMeshes.push(checkpoint_mesh);
 	
 	// add end
-	var checkpoint_material_end = new THREE.MeshBasicMaterial({color: 0xFF0066, transparent: true, opacity: 0.7 });
+	var checkpoint_material_end = new THREE.MeshBasicMaterial({color: 0xE32E30 /*0xFF0066*/, transparent: true, opacity: 0.9 });
 	checkpoint_material_end.side = THREE.DoubleSide;
 	var checkpoint_mesh_end = new THREE.Mesh(checkpoint_geometry, checkpoint_material_end);
 	point = tube.parameters.path.getPointAt(endP);
