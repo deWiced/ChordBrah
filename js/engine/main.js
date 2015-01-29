@@ -585,10 +585,10 @@ function render(delta_t) {
 
 	// Using arclength for stablization in look ahead.
 	var lookAt = tube.parameters.path.getPointAt( ( t + 30 / tube.parameters.path.getLength() ) % 1 ).multiplyScalar( scale );
-	var lookAt2 = tube.parameters.path.getPointAt( ( t + 30 / tube.parameters.path.getLength() ) % 1 ).multiplyScalar( scale );
+	var lookAt2 = tube.parameters.path.getPointAt( ( t + 1000 / tube.parameters.path.getLength() ) % 1 ).multiplyScalar( scale );
 	// Camera Orientation 2 - up orientation via normal
 	lookAt.copy(pos ).sub( dir );
-	lookAt2.copy(pos).add(dir);
+	//lookAt2.copy(pos).add(dir);
 	//normal.multiplyScalar(-1);
 	//normal.applyAxisAngle(lookAt2,30);
 	
