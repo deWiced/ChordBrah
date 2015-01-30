@@ -49,7 +49,7 @@
 		<div id="wrapper" ng-controller="menuController">
 			<div id="menu" ng-hide="activeView != 'menuView'">
 				<div id="logo">Chord Brah</div>
-				<button id="mainPlayBtn" disabled ng-click="setSongSelect()">Play</button>
+				<button id="mainPlayBtn" ng-click="setSongSelect()">Play</button>
 				<button id="editorBtn" ng-click="setEditor()">Editor</button>
 				<button id="optionsBtn" ng-click="setOptions()">Options</button>
 				<!-- <button id="helpBtn">Help</button> -->
@@ -60,11 +60,15 @@
 					<label>Song Selection</label>
 				</div>
 				<div id="songSelection">
-					<input type="file" webkitdirectory id="folderSelector" onchange="angular.element(this).scope().setFiles(this)"">
-					<div class="song" ng-repeat="song in songs">
-						<label>{{song}}</label>
+					<div class="song" ng-repeat="song in songs" ng-class="{active : isSelected(song)}" ng-click="select(song)">
+						<label class="name">{{song.info.name}}</label>
+						<label class="info">Tempo: {{song.info.tempo}}</label>
 					</div>
 				</div>
+				<div id="bottomLine">					
+					<button id="playSelectedBtn" ng-click="playSelected()">Play</button>
+					<button id="openInEdtBtn" ng-click="editSelected()">Open in editor</button>
+				</div>				
 			</div>
 			<div id="options" ng-hide="activeView != 'optionsView'" ng-controller="optionsController">
 				<div class="navigation">

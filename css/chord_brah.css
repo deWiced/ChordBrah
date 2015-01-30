@@ -52,9 +52,6 @@ body {
 	text-decoration: underline;
 }
 
-#mainPlayBtn {
-	text-decoration: line-through;
-}
 
 /* Editor style */
 
@@ -155,6 +152,7 @@ label {
 	border: 0px;
 	float: right;
 	right: 50px;
+	display: none;
 }
 
 #openFileBtn-label {
@@ -216,24 +214,68 @@ label {
 .song {
 	margin: 20px 30px 20px 30px;
 	float: left;
-	width: 220px;
-	height: 300px;
-	background: url("../img/other/polaroid.png") center no-repeat;
-	-webkit-background-size: cover;
-	-moz-background-size: cover;
-	-o-background-size: cover;
-	background-size: cover;
+	width: 300px;
+	height: 170px;
+	background: rgba(1,1,1,0.2);
 }
 
-.song label {
+.song:hover, .song .name:hover, .song .info:hover {
+	cursor: pointer;
+}
+
+.active {
+	background: rgba(230, 64, 22, 0.5);
+}
+
+/* FIX */
+.song .name {
 	position: relative;
-	top: 120px;
-	left: 20px;
+	top: 10px;
+	text-align: left;
+	overflow: hidden;
 	font-size: 32px;
+	color: white;
+	display: block;
+}
+
+/* FIX */
+.song .info {
+	position: relative;
+	display: block;
+	top: 50px;
+	text-align: left;
+	overflow: hidden;
+	font-size: 18px;
 	color: white;
 }
 
+#bottomLine {
+	position: absolute;
+	bottom: 80px;
+	width: 100%;
+}
 
+#openInEdtBtn, #playSelectedBtn {
+	border: none;
+	color: white;
+	font-family: 'Love Ya Like A Sister', cursive;
+	cursor: pointer;
+	background-color: transparent;
+	font-size: 25px;
+	float: right;
+}
+
+#openInEdtBtn {
+	margin-right: 20px;
+}
+
+#playSelectedBtn {
+	margin-right: 180px;
+}
+
+#openInEdtBtn:hover, #playSelectedBtn:hover {
+	background-color: #E64016;
+}
 
 /* GUI STYLE */
 
