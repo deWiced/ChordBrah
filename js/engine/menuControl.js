@@ -35,7 +35,7 @@ ChordBrah.service("predefinedTracks", function($http) {
 
 ChordBrah.controller("menuController", function($rootScope, $scope) {
 	$scope.activeView = "menuView";
-	
+
 	$rootScope.$on("changeView", function(event, view) {$scope.activeView = view;});
 	
 	$scope.setEditor = function() {
@@ -409,10 +409,10 @@ ChordBrah.controller("editorController", function($rootScope, $scope, $compile) 
 	});
 });
 
-ChordBrah.controller("gameMenuController", function($rootScope, $scope) {
+ChordBrah.controller("gameMenuController", function($rootScope, $scope, $location) {
 	$scope.exitToMenu = function() {
 		// remove help label
-		$("#helpLabel").css("display", "none");
+		/*$("#helpLabel").css("display", "none");
 		
 		// close GUI
 		$("#gui").css("display", "none");
@@ -435,7 +435,12 @@ ChordBrah.controller("gameMenuController", function($rootScope, $scope) {
 		$("#container").empty();
 		
 		// change to main menu
-		$rootScope.$broadcast("changeView", "menuView");	
+		$rootScope.$broadcast("changeView", "menuView");*/
+		
+		// do scene cleanup
+		clearScene();
+		
+		window.location.reload();
 	};
 });
 

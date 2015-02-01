@@ -436,36 +436,11 @@ label {
  }
  
  
- /* Help mode */
- 
- #helpLabel {
- 	position: absolute;
- 	display: none;
-    left: 7%;
-    bottom: 0;
- 	font-size: 62px;
- 	color: white;
- 	font-family: 'Love Ya Like A Sister', cursive;
- }
-
- #helpText {
- 	position: absolute;
-    left: 7%;
-    bottom: 7%;
- 	font-size: 62px;
- 	color: white;
- 	font-family: 'Love Ya Like A Sister', cursive;
- }
-
-#names {
-	position: relative;
-	left: 5%;
-}
+/* Help */
 
  #navodile {
- 	position: relative;
-    left: 10%;
-    top: 7%;
+    margin-left: 10%;
+    margin-top: 7%;
  	font-size: 17px;
  	color: white;
  	font-family: 'Love Ya Like A Sister', cursive;
@@ -473,8 +448,23 @@ label {
 
  #navodile_text {
  	position: relative;
-    left: 1%;
+    margin-left: 1%;
  	font-size: 17px;
  	color: white;
  	font-family: 'Love Ya Like A Sister', cursive;
  }
+ 
+  /* Credits */
+ 
+  #creditsText {
+    margin-left: 7%;
+    margin-bottom: 7%;
+ 	font-size: 42px;
+ 	color: white;
+ 	font-family: 'Love Ya Like A Sister', cursive;
+ }
+
+ #names {
+	margin-left: 5%;
+}
+
