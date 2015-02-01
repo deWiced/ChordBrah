@@ -1,7 +1,7 @@
 
 // constants
 var FOV = 75, NEAR_PLANE = 0.1, FAR_PLANE = 1000;
-
+var is_learning_mode, is_end;
 var scene, camera, controls, renderer, composer, container;
 var glitch;
 var skyBox;
@@ -37,8 +37,10 @@ var checkpoint_shape, checkpoint_geometry, checkpointMeshes;
 
 var registered_chords, chord_instances, chord_sequence;
 
+
 function initGameValues() {
 	// MAIN VALUES
+	is_end = false;
 	glitch = false;
 	glitchCt = 0;
 	clock = new THREE.Clock(false);
@@ -122,8 +124,13 @@ function initGameValues() {
 }
 
 //initialization
-function initGame(screenWidth, screenHeight, generatedTrack) {
+function initGame(screenWidth, screenHeight, generatedTrack, learningMode) {
 	initGameValues();
+	
+	// SET LEARNING MODE
+	is_learning_mode = learningMode;
+	
+	// START CLOCK
 	clock.start();
 	
 	// SET UP SCREEN SIZE
@@ -365,10 +372,13 @@ document.body.addEventListener("keydown", function( event ) {
     			 clock.start();
     			 requestAnimationFrame( animate );
     			 resumeChord(currentChord);
+    			 if(is_learning_mode && drawCt > 1) 
+    				 $("#helpLabel").css("display", "block");
     		 }
     		 else {
     			 clock.stop();
     			 pauseChord(currentChord);
+    			 $("#helpLabel").css("display", "none");
     		 }
     		 break;
 		//case 70: THREEx.FullScreen.request(); break;
@@ -435,13 +445,16 @@ function animate() {
 		
 		if(startAudio) {
 			// Play current chord
-			if(currentDurration <= 0) {
+			if(currentDurration <= 0 && !is_end) {
 				if(pos < chord_sequence.length) {
 					currentChord = chord_sequence[pos].name;
 					playChord(currentChord, chord_sequence[pos].time_duration);
 					currentDurration = chord_sequence[pos].time_duration;
 					pos++; 
 					
+					// display help label
+					if(is_learning_mode)
+						displayHelpLabel(currentChord);
 				}
 			}
 			else {
@@ -453,6 +466,14 @@ function animate() {
 	}
 	
 	requestAnimationFrame( animate );
+}
+
+// display help label
+function displayHelpLabel(answer) {
+	$("#helpLabel").css("display", "none");
+	$("#helpLabel").css("bottom", "0");
+	$("#helpLabel").fadeIn(100).animate( {bottom: "50%", left: "7%"}, 350 );
+	$("#helpLabel").text(answer);
 }
 
 // render loop 
@@ -527,7 +548,7 @@ function render(delta_t) {
 		}
 		else {
 			glitch = true;
-			setupShaders();
+			setupShaders();		
 		}
 		
 		// add new checkpoint
@@ -560,6 +581,8 @@ function render(delta_t) {
 			$("#actionLabel").text("Game Over!");
 			currentCheckpoint = null;
 			currentCheckpointIndex = -1;
+			is_end = true;
+			$("#helpLabel").css("display", "none");
 			toggleGameMenu();
 		}
 	}

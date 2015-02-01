@@ -54,7 +54,7 @@ ChordBrah.controller("menuController", function($rootScope, $scope) {
 ChordBrah.controller("songSelectController", function($rootScope, $scope, predefinedTracks) {
 	//$scope.songs = predefinedTracks.getTracks();
 	$scope.selected = null;
-	
+	$scope.learingMode = false;
 	$scope.selectedIndex = null;
 	
 	$scope.songs = 
@@ -79,7 +79,7 @@ ChordBrah.controller("songSelectController", function($rootScope, $scope, predef
 	};
 	
 	$scope.playSelected = function() {
-		$rootScope.$broadcast("playSelectedSong", $scope.selected);
+		$rootScope.$broadcast("playSelectedSong",[$scope.learingMode, $scope.selected]);
 	};
 	
 	/*$scope.songs = [];
@@ -135,6 +135,8 @@ ChordBrah.controller("editorController", function($rootScope, $scope, $compile) 
 	$scope.sectionId = 0;
 	$scope.chordIds = [];
 	$scope.sectionsCheckpointRestrictions = [];
+	
+	$scope.learingMode = false;
 	
 	$scope.root_insert_HTML = "";
 	for(var key in ROOT_NOTES)
@@ -359,7 +361,7 @@ ChordBrah.controller("editorController", function($rootScope, $scope, $compile) 
 	$scope.play = function() {
 		// TODO client side validation
 		$scope.generateTrack();
-		initGame($("#wrapper").width(), $("#wrapper").height(), $scope.generatedTrack);
+		initGame($("#wrapper").width(), $("#wrapper").height(), $scope.generatedTrack, $scope.learingMode);
 		$rootScope.$broadcast("changeView", "gameView");		
 	};
 	
@@ -373,15 +375,19 @@ ChordBrah.controller("editorController", function($rootScope, $scope, $compile) 
 		$scope.displayTrack(song);
 	});
 	
-	$scope.$on("playSelectedSong", function(event, song) {
+	$scope.$on("playSelectedSong", function(event, params) {
 		$scope.clearEditor();
-		$scope.displayTrack(song);
+		$scope.learingMode = params[0];
+		$scope.displayTrack(params[1]);
 		$scope.play();
 	});
 });
 
 ChordBrah.controller("gameMenuController", function($rootScope, $scope) {
 	$scope.exitToMenu = function() {
+		// remove help label
+		$("#helpLabel").css("display", "none");
+		
 		// close GUI
 		$("#gui").css("display", "none");
 		
