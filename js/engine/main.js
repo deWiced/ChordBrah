@@ -176,11 +176,7 @@ function initGame(screenWidth, screenHeight, generatedTrack, learningMode) {
 	// GENERATE AND DIPSLAY CHECKPOINT VALUES
 	generateChekpointValues();
 	setGUIvalues();
-	if (is_learning_mode) {
-		displayHelpLabel(currentCheckpoint.orientation);
-	} else {
-		$("#arrowImg").attr("src", "img/other/4wayArrow.png");	
-	}
+	
 	// SPACESHIP
 	createSpaceShip();
 	
@@ -207,13 +203,14 @@ function generateChekpointValues() {
 	
 	randomValues.sort(function(a, b){return a.val-b.val});
 
+	var value_temp = currentCheckpoint.value.split(" "); 
 	for(var i=0; i < randomValues.length; i++) {
 		switch(i) {
 			case 0: allCheckpointValues[currentSectionId][randomValues[i].ind].orientation = "right"; break;
 			case 1: allCheckpointValues[currentSectionId][randomValues[i].ind].orientation = "left"; break;
 			case 2: allCheckpointValues[currentSectionId][randomValues[i].ind].orientation = "up"; break;
 			case 3: allCheckpointValues[currentSectionId][randomValues[i].ind].orientation = "down"; break;
-		}
+		}	
 	}
 }
 
@@ -419,7 +416,9 @@ function colorGUIselection() {
 	if(lastOrientation == orientation)
 		return;
 	
-	$("#arrowImg").attr("src", "img/other/4wayArrow_" + orientation + ".png");
+	if(!is_learning_mode)
+		$("#arrowImg").attr("src", "img/other/4wayArrow_" + orientation + ".png");
+	
 	$("#gui_" + orientation).css("color", "red");
 	lastOrientation = orientation;
 }
@@ -429,7 +428,8 @@ function clearGUIselection() {
 	$("#gui_right").css("color", "white");
 	$("#gui_down").css("color", "white");
 	$("#gui_left").css("color", "white");
-	$("#arrowImg").attr("src", "img/other/4wayArrow.png");
+	if(!is_learning_mode)
+		$("#arrowImg").attr("src", "img/other/4wayArrow.png");
 	lastOrientation = null;
 }
 
@@ -468,6 +468,17 @@ function animate() {
 	}
 	
 	requestAnimationFrame( animate );
+}
+
+// get correct orientation
+function getCorrectOrientation(){
+	var value_temp = currentCheckpoint.value.split(" "); 
+	for(var i = 0; i < allCheckpointValues[currentSectionId].length; i++) {
+		if(allCheckpointValues[currentSectionId][i].value == value_temp[0]) {
+			currentCheckpoint["orientation"] = allCheckpointValues[currentSectionId][i].orientation;
+			break;
+		}
+	}		
 }
 
 // display help label
@@ -529,20 +540,20 @@ function render(delta_t) {
 		}	
 	}
 	
+	// check if we are at checkpoint start
+	if(startAudio && currentCheckpoint != null && t - currentCheckpoint.startProcent >= 0 && t - currentCheckpoint.startProcent <= 0.1) {
+		// store the correct orientation
+		getCorrectOrientation();
+		
+		if(is_learning_mode)
+			displayHelpLabel(currentCheckpoint.orientation);	
+	}
+	
 	// check if we are at current checkpoint end
 	if(startAudio && currentCheckpoint != null && t - currentCheckpoint.endProcent >= 0 && t - currentCheckpoint.endProcent <= 0.1) {
-		// get the correct answer
-		var correctOrientation;		
-		var value_temp = currentCheckpoint.value.split(" "); 
-		for(var i = 0; i < allCheckpointValues[currentSectionId].length; i++) {
-			if(allCheckpointValues[currentSectionId][i].value == value_temp[0]) {
-				correctOrientation = allCheckpointValues[currentSectionId][i].orientation;
-				break;
-			}
-		}		
 
 		// check user answer
-		if(correctOrientation == orientation) {
+		if(currentCheckpoint.orientation == orientation) {
 			correctAnswers++;
 		}
 		else {
@@ -569,10 +580,12 @@ function render(delta_t) {
 				currentSectionId++;
 				clearGUIvalues();
 				generateChekpointValues();
-				setGUIvalues();
-
-				displayHelpLabel(currentCheckpoint.orientation);				
+				setGUIvalues();						
 			}
+			
+			// clear learning mode
+			if(is_learning_mode)
+				$("#arrowImg").attr("src", "img/other/4wayArrow.png");	
 		}
 				
 		else {
