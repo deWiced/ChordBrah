@@ -592,7 +592,7 @@ function render(delta_t) {
 			// show ending screen
 			$("#scoreLabel").text("Total score: " + correctAnswers + " / " + String(currentCheckpointIndex));
 			$("#totalCheckpoints").css("display", "none");
-			$("#actionLabel").text("Game Over!");
+			$("#actionLabel").text("Track completed!");
 			currentCheckpoint = null;
 			currentCheckpointIndex = -1;
 			is_end = true;
