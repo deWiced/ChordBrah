@@ -68,6 +68,7 @@
 				</div>
 				<div id="bottomLine">					
 					<button id="playSelectedBtn" ng-click="playSelected()">Play</button>
+					<input type="checkbox" id="learningModeChkBx" ng-model="learingMode"><label id="learingModeInfo">Learning mode: </label>
 					<button id="openInEdtBtn" ng-click="editSelected()">Open in editor</button>
 				</div>				
 			</div>
@@ -109,6 +110,7 @@
 					<button id="clearEditorBtn" ng-click="clearEditor()" style="margin-left:20px">Clear editor</button>
 					<button id="playBtn" ng-click="play()" style="float: right; margin-right: 20px">Play</button>
 					<input type="file" id="openFileBtn"/>
+					<input type="checkbox" id="learningModeChkBx_editor" ng-model="learingMode"><label id="learingModeInfo_editor">Learning mode: </label>
 					<label id="openFileBtn-label" for="openFileBtn">Open</label>
 					<a id="saveTrackBtn" ng-click="saveTrack()" style="float: right; margin-right: 20px" href="" download="">Save track</a>
 					
@@ -144,6 +146,7 @@
 				<label id="totalCheckpoints"></label>
 				<button id="exitToMenuBtn" ng-click="exitToMenu()">Exit to main menu</button>
 			</div>
+			<label id="helpLabel"></label>
 		</div>
 		
 		<script src="js/engine/main.js"></script>
