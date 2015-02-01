@@ -176,7 +176,11 @@ function initGame(screenWidth, screenHeight, generatedTrack, learningMode) {
 	// GENERATE AND DIPSLAY CHECKPOINT VALUES
 	generateChekpointValues();
 	setGUIvalues();
-	
+	if (is_learning_mode) {
+		displayHelpLabel(currentCheckpoint.orientation);
+	} else {
+		$("#arrowImg").attr("src", "img/other/4wayArrow.png");	
+	}
 	// SPACESHIP
 	createSpaceShip();
 	
@@ -404,7 +408,7 @@ function clearGUIvalues() {
 	$("#gui_left").text("");
 }
 
-function setGUIvalues(up, right, down, left) {
+function setGUIvalues() {
 	for(var i=0; i < allCheckpointValues[currentSectionId].length; i++) {
 		var checkP = allCheckpointValues[currentSectionId][i];
 		$("#gui_" + checkP.orientation).text(String(checkP.value));
@@ -415,6 +419,7 @@ function colorGUIselection() {
 	if(lastOrientation == orientation)
 		return;
 	
+	$("#arrowImg").attr("src", "img/other/4wayArrow_" + orientation + ".png");
 	$("#gui_" + orientation).css("color", "red");
 	lastOrientation = orientation;
 }
@@ -424,6 +429,7 @@ function clearGUIselection() {
 	$("#gui_right").css("color", "white");
 	$("#gui_down").css("color", "white");
 	$("#gui_left").css("color", "white");
+	$("#arrowImg").attr("src", "img/other/4wayArrow.png");
 	lastOrientation = null;
 }
 
@@ -451,10 +457,6 @@ function animate() {
 					playChord(currentChord, chord_sequence[pos].time_duration);
 					currentDurration = chord_sequence[pos].time_duration;
 					pos++; 
-					
-					// display help label
-					if(is_learning_mode)
-						displayHelpLabel(currentChord);
 				}
 			}
 			else {
@@ -469,11 +471,8 @@ function animate() {
 }
 
 // display help label
-function displayHelpLabel(answer) {
-	$("#helpLabel").css("display", "none");
-	$("#helpLabel").css("bottom", "0");
-	$("#helpLabel").fadeIn(100).animate( {bottom: "50%", left: "7%"}, 350 );
-	$("#helpLabel").text(answer);
+function displayHelpLabel(orientation) {
+	$("#arrowImg").attr("src", "img/other/4wayArrow_" + orientation + "_help.png");
 }
 
 // render loop 
@@ -571,6 +570,8 @@ function render(delta_t) {
 				clearGUIvalues();
 				generateChekpointValues();
 				setGUIvalues();
+
+				displayHelpLabel(currentCheckpoint.orientation);				
 			}
 		}
 				
