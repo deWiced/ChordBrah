@@ -45,6 +45,14 @@ ChordBrah.controller("menuController", function($rootScope, $scope) {
 	$scope.setOptions = function() {
 		$rootScope.$broadcast("changeView", "optionsView");
 	};
+
+	$scope.setHelp = function() {
+		$rootScope.$broadcast("changeView", "helpView");
+	};
+
+	$scope.setCredits = function() {
+		$rootScope.$broadcast("changeView", "creditsView");
+	};
 	
 	$scope.setSongSelect = function() {
 		$rootScope.$broadcast("changeView", "songSelectView");
@@ -127,6 +135,24 @@ ChordBrah.controller("optionsController", function($rootScope, $scope) {
 			$("#heightInput").val(SCREEN_HEIGHT);
 		}
 	};
+});
+
+ChordBrah.controller("helpController", function($rootScope, $scope) {
+	$scope.toMenu = function() {
+		$rootScope.$broadcast("changeView", "menuView");
+	};
+	
+	$scope.fullscreen = false;
+	
+});
+
+ChordBrah.controller("creditsController", function($rootScope, $scope) {
+	$scope.toMenu = function() {
+		$rootScope.$broadcast("changeView", "menuView");
+	};
+	
+	$scope.fullscreen = false;
+	
 });
 
 ChordBrah.controller("editorController", function($rootScope, $scope, $compile) {

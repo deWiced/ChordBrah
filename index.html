@@ -52,7 +52,8 @@
 				<button id="mainPlayBtn" ng-click="setSongSelect()">Play</button>
 				<button id="editorBtn" ng-click="setEditor()">Editor</button>
 				<button id="optionsBtn" ng-click="setOptions()">Options</button>
-				<!-- <button id="helpBtn">Help</button> -->
+				<button id="helpBtn" ng-click="setHelp()">Help</button>
+				<button id="creditsBtn" ng-click="setCredits()">Credits</button>
 			</div>
 			<div id="songSelect" ng-hide="activeView != 'songSelectView'" ng-controller="songSelectController">
 				<div class="navigation">
@@ -113,6 +114,20 @@
 					
 					</fieldset>
 				</div>
+			</div>
+			<div id="help" ng-hide="activeView != 'helpView'" ng-controller="helpController">
+				<div class="navigation">
+					<button id="help_backBtn" ng-click="toMenu()">back</button>
+					<label>Help</label>
+				</div>
+				TRALALA
+			</div>
+			<div id="credits" ng-hide="activeView != 'creditsView'" ng-controller="creditsController">
+				<div class="navigation">
+					<button id="credits_backBtn" ng-click="toMenu()">back</button>
+					<label>Credits</label>
+				</div>
+				WE DUN' DID IT
 			</div>
 			<div id="container" ng-hide="activeView != 'gameView'"></div>
 			<div id="gui">
