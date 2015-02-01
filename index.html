@@ -122,15 +122,33 @@
 					<button id="help_backBtn" ng-click="toMenu()">back</button>
 					<label>Help</label>
 				</div>
-				TRALALA
+				<div id="navodile">
+					<h3>What?</h3>
+					<p id="navodile_text">Game, created as a tool for learning to distinguish between different types of music chords (i.e. ``ear training´´).</p>
+					<h3>Why?</h3>
+					<p id="navodile_text">Because the existing tools for doing so are boring.</p>
+					<h3>How?</h3>
+					<p id="navodile_text">Load or create a track using ``Editor´´ or choose one of the preloaded options through the ``Play´´ menu.</p>
+					<p id="navodile_text">Each track consists of one or more sections in which up to 4 chords can be selected as the possible answers.</p>
+					<p id="navodile_text">Each chord answer is represented as one of the four possible movement directions.</p>
+					<p id="navodile_text">In the game, blue circles indicate the beginning of a checkpoint.</p>
+					<p id="navodile_text">While driving through the red end marker, the correct directional key for the appropriate answer</p>
+					<p id="navodile_text">(to the currently playing chord) needs to be pressed.</p>
+					<p id="navodile_text">Move using ``WSAD´´ or direction keys. Use ``Space´´ for pausing the game.</p>
+				</div>
 			</div>
 			<div id="credits" ng-hide="activeView != 'creditsView'" ng-controller="creditsController">
 				<div class="navigation">
 					<button id="credits_backBtn" ng-click="toMenu()">back</button>
 					<label>Credits</label>
 				</div>
-				<h2>Created by:</h2>
-				<h3></h3>
+				<div id="helpText">
+					<h2>Created by:</h2>
+					<div id="names">
+						<h3>Anže Čuk & Anej Placer</h3>
+						<h4>Slovenia, 2015</h4>
+						</div>
+				</div>
 			</div>
 			<div id="container" ng-hide="activeView != 'gameView'"></div>
 			<div id="gui">
