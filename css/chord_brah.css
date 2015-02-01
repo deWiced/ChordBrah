@@ -12,7 +12,7 @@ body {
 	background-size: cover;
 }
 
-#container, #editor, #menu, #options, #songSelect {
+#container, #editor, #menu, #options, #songSelect, #help, #credits {
 	overflow: auto;
 	width: 100%; 
 	height: 100%; 
@@ -45,10 +45,6 @@ body {
 
 #menu button:hover{
 	cursor: pointer;
-}
-
-#editorBtn:hover, 
-#optionsBtn:hover {
 	text-decoration: underline;
 }
 
@@ -199,6 +195,17 @@ label {
 	float: right;
 }
 
+#learingModeInfo_editor {
+	float: right;
+	font-family: 'Love Ya Like A Sister', cursive;
+	font-size: 16px;
+	margin-right: 5px;
+}
+
+#learningModeChkBx_editor {
+	float: right;
+	margin-right: 10px;
+}
 
 /*   Song selection style */
 
@@ -273,9 +280,26 @@ label {
 	margin-right: 180px;
 }
 
+#learingModeInfo {
+	float: right;
+	color: white;
+	font-family: 'Love Ya Like A Sister', cursive;
+	font-size: 25px;
+	margin-right: 5px;
+}
+
+#learningModeChkBx {
+	position: relative;
+	float: right;
+	margin-right: 10px;
+	top: 8px;
+}
+
 #openInEdtBtn:hover, #playSelectedBtn:hover {
 	background-color: #E64016;
 }
+
+
 
 /* GUI STYLE */
 
@@ -393,11 +417,13 @@ label {
  }
  
  #exitToMenuBtn {
+ 	position: relative;
  	font-size: 62px;
  	color: white;
  	font-family: 'Love Ya Like A Sister', cursive;
  	cursor: pointer;
- 	left: 33%;
+ 	margin-left: auto;
+ 	margin-right: auto;
  	border: none;
  	background: transparent;
  	border-radius: 25px;
@@ -408,3 +434,37 @@ label {
  #exitToMenuBtn:HOVER {
  	background-color: #E64016 /*#e7634b*/
  }
+ 
+ 
+/* Help */
+
+ #navodile {
+    margin-left: 10%;
+    margin-top: 7%;
+ 	font-size: 17px;
+ 	color: white;
+ 	font-family: 'Love Ya Like A Sister', cursive;
+ }
+
+ #navodile_text {
+ 	position: relative;
+    margin-left: 1%;
+ 	font-size: 17px;
+ 	color: white;
+ 	font-family: 'Love Ya Like A Sister', cursive;
+ }
+ 
+  /* Credits */
+ 
+  #creditsText {
+    margin-left: 7%;
+    margin-top: 20%;
+ 	font-size: 42px;
+ 	color: white;
+ 	font-family: 'Love Ya Like A Sister', cursive;
+ }
+
+ #names {
+	margin-left: 5%;
+}
+

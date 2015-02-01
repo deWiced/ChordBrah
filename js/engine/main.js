@@ -1,7 +1,7 @@
 
 // constants
 var FOV = 75, NEAR_PLANE = 0.1, FAR_PLANE = 1000;
-
+var is_learning_mode, is_end;
 var scene, camera, controls, renderer, composer, container;
 var glitch;
 var skyBox;
@@ -37,8 +37,10 @@ var checkpoint_shape, checkpoint_geometry, checkpointMeshes;
 
 var registered_chords, chord_instances, chord_sequence;
 
+
 function initGameValues() {
 	// MAIN VALUES
+	is_end = false;
 	glitch = false;
 	glitchCt = 0;
 	clock = new THREE.Clock(false);
@@ -122,8 +124,13 @@ function initGameValues() {
 }
 
 //initialization
-function initGame(screenWidth, screenHeight, generatedTrack) {
+function initGame(screenWidth, screenHeight, generatedTrack, learningMode) {
 	initGameValues();
+	
+	// SET LEARNING MODE
+	is_learning_mode = learningMode;
+	
+	// START CLOCK
 	clock.start();
 	
 	// SET UP SCREEN SIZE
@@ -196,13 +203,14 @@ function generateChekpointValues() {
 	
 	randomValues.sort(function(a, b){return a.val-b.val});
 
+	var value_temp = currentCheckpoint.value.split(" "); 
 	for(var i=0; i < randomValues.length; i++) {
 		switch(i) {
 			case 0: allCheckpointValues[currentSectionId][randomValues[i].ind].orientation = "right"; break;
 			case 1: allCheckpointValues[currentSectionId][randomValues[i].ind].orientation = "left"; break;
 			case 2: allCheckpointValues[currentSectionId][randomValues[i].ind].orientation = "up"; break;
 			case 3: allCheckpointValues[currentSectionId][randomValues[i].ind].orientation = "down"; break;
-		}
+		}	
 	}
 }
 
@@ -365,10 +373,13 @@ document.body.addEventListener("keydown", function( event ) {
     			 clock.start();
     			 requestAnimationFrame( animate );
     			 resumeChord(currentChord);
+    			 if(is_learning_mode && drawCt > 1) 
+    				 $("#helpLabel").css("display", "block");
     		 }
     		 else {
     			 clock.stop();
     			 pauseChord(currentChord);
+    			 $("#helpLabel").css("display", "none");
     		 }
     		 break;
 		//case 70: THREEx.FullScreen.request(); break;
@@ -394,7 +405,7 @@ function clearGUIvalues() {
 	$("#gui_left").text("");
 }
 
-function setGUIvalues(up, right, down, left) {
+function setGUIvalues() {
 	for(var i=0; i < allCheckpointValues[currentSectionId].length; i++) {
 		var checkP = allCheckpointValues[currentSectionId][i];
 		$("#gui_" + checkP.orientation).text(String(checkP.value));
@@ -405,6 +416,9 @@ function colorGUIselection() {
 	if(lastOrientation == orientation)
 		return;
 	
+	if(!is_learning_mode)
+		$("#arrowImg").attr("src", "img/other/4wayArrow_" + orientation + ".png");
+	
 	$("#gui_" + orientation).css("color", "red");
 	lastOrientation = orientation;
 }
@@ -414,6 +428,8 @@ function clearGUIselection() {
 	$("#gui_right").css("color", "white");
 	$("#gui_down").css("color", "white");
 	$("#gui_left").css("color", "white");
+	if(!is_learning_mode)
+		$("#arrowImg").attr("src", "img/other/4wayArrow.png");
 	lastOrientation = null;
 }
 
@@ -435,13 +451,12 @@ function animate() {
 		
 		if(startAudio) {
 			// Play current chord
-			if(currentDurration <= 0) {
+			if(currentDurration <= 0 && !is_end) {
 				if(pos < chord_sequence.length) {
 					currentChord = chord_sequence[pos].name;
 					playChord(currentChord, chord_sequence[pos].time_duration);
 					currentDurration = chord_sequence[pos].time_duration;
 					pos++; 
-					
 				}
 			}
 			else {
@@ -453,6 +468,22 @@ function animate() {
 	}
 	
 	requestAnimationFrame( animate );
+}
+
+// get correct orientation
+function getCorrectOrientation(){
+	var value_temp = currentCheckpoint.value.split(" "); 
+	for(var i = 0; i < allCheckpointValues[currentSectionId].length; i++) {
+		if(allCheckpointValues[currentSectionId][i].value == value_temp[0]) {
+			currentCheckpoint["orientation"] = allCheckpointValues[currentSectionId][i].orientation;
+			break;
+		}
+	}		
+}
+
+// display help label
+function displayHelpLabel(orientation) {
+	$("#arrowImg").attr("src", "img/other/4wayArrow_" + orientation + "_help.png");
 }
 
 // render loop 
@@ -509,25 +540,25 @@ function render(delta_t) {
 		}	
 	}
 	
+	// check if we are at checkpoint start
+	if(startAudio && currentCheckpoint != null && t - currentCheckpoint.startProcent >= 0 && t - currentCheckpoint.startProcent <= 0.1) {
+		// store the correct orientation
+		getCorrectOrientation();
+		
+		if(is_learning_mode)
+			displayHelpLabel(currentCheckpoint.orientation);	
+	}
+	
 	// check if we are at current checkpoint end
 	if(startAudio && currentCheckpoint != null && t - currentCheckpoint.endProcent >= 0 && t - currentCheckpoint.endProcent <= 0.1) {
-		// get the correct answer
-		var correctOrientation;		
-		var value_temp = currentCheckpoint.value.split(" "); 
-		for(var i = 0; i < allCheckpointValues[currentSectionId].length; i++) {
-			if(allCheckpointValues[currentSectionId][i].value == value_temp[0]) {
-				correctOrientation = allCheckpointValues[currentSectionId][i].orientation;
-				break;
-			}
-		}		
 
 		// check user answer
-		if(correctOrientation == orientation) {
+		if(currentCheckpoint.orientation == orientation) {
 			correctAnswers++;
 		}
 		else {
 			glitch = true;
-			setupShaders();
+			setupShaders();		
 		}
 		
 		// add new checkpoint
@@ -549,17 +580,23 @@ function render(delta_t) {
 				currentSectionId++;
 				clearGUIvalues();
 				generateChekpointValues();
-				setGUIvalues();
+				setGUIvalues();						
 			}
+			
+			// clear learning mode
+			if(is_learning_mode)
+				$("#arrowImg").attr("src", "img/other/4wayArrow.png");	
 		}
 				
 		else {
 			// show ending screen
 			$("#scoreLabel").text("Total score: " + correctAnswers + " / " + String(currentCheckpointIndex));
 			$("#totalCheckpoints").css("display", "none");
-			$("#actionLabel").text("Game Over!");
+			$("#actionLabel").text("Track completed!");
 			currentCheckpoint = null;
 			currentCheckpointIndex = -1;
+			is_end = true;
+			$("#helpLabel").css("display", "none");
 			toggleGameMenu();
 		}
 	}

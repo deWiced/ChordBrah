@@ -35,7 +35,7 @@ ChordBrah.service("predefinedTracks", function($http) {
 
 ChordBrah.controller("menuController", function($rootScope, $scope) {
 	$scope.activeView = "menuView";
-	
+
 	$rootScope.$on("changeView", function(event, view) {$scope.activeView = view;});
 	
 	$scope.setEditor = function() {
@@ -44,6 +44,14 @@ ChordBrah.controller("menuController", function($rootScope, $scope) {
 	
 	$scope.setOptions = function() {
 		$rootScope.$broadcast("changeView", "optionsView");
+	};
+
+	$scope.setHelp = function() {
+		$rootScope.$broadcast("changeView", "helpView");
+	};
+
+	$scope.setCredits = function() {
+		$rootScope.$broadcast("changeView", "creditsView");
 	};
 	
 	$scope.setSongSelect = function() {
@@ -54,7 +62,7 @@ ChordBrah.controller("menuController", function($rootScope, $scope) {
 ChordBrah.controller("songSelectController", function($rootScope, $scope, predefinedTracks) {
 	//$scope.songs = predefinedTracks.getTracks();
 	$scope.selected = null;
-	
+	$scope.learingMode = false;
 	$scope.selectedIndex = null;
 	
 	$scope.songs = 
@@ -79,7 +87,7 @@ ChordBrah.controller("songSelectController", function($rootScope, $scope, predef
 	};
 	
 	$scope.playSelected = function() {
-		$rootScope.$broadcast("playSelectedSong", $scope.selected);
+		$rootScope.$broadcast("playSelectedSong",[$scope.learingMode, $scope.selected]);
 	};
 	
 	/*$scope.songs = [];
@@ -129,12 +137,32 @@ ChordBrah.controller("optionsController", function($rootScope, $scope) {
 	};
 });
 
+ChordBrah.controller("helpController", function($rootScope, $scope) {
+	$scope.toMenu = function() {
+		$rootScope.$broadcast("changeView", "menuView");
+	};
+	
+	$scope.fullscreen = false;
+	
+});
+
+ChordBrah.controller("creditsController", function($rootScope, $scope) {
+	$scope.toMenu = function() {
+		$rootScope.$broadcast("changeView", "menuView");
+	};
+	
+	$scope.fullscreen = false;
+	
+});
+
 ChordBrah.controller("editorController", function($rootScope, $scope, $compile) {
 	
 	$scope.generatedTrack;
 	$scope.sectionId = 0;
 	$scope.chordIds = [];
 	$scope.sectionsCheckpointRestrictions = [];
+	
+	$scope.learingMode = false;
 	
 	$scope.root_insert_HTML = "";
 	for(var key in ROOT_NOTES)
@@ -359,7 +387,7 @@ ChordBrah.controller("editorController", function($rootScope, $scope, $compile) 
 	$scope.play = function() {
 		// TODO client side validation
 		$scope.generateTrack();
-		initGame($("#wrapper").width(), $("#wrapper").height(), $scope.generatedTrack);
+		initGame($("#wrapper").width(), $("#wrapper").height(), $scope.generatedTrack, $scope.learingMode);
 		$rootScope.$broadcast("changeView", "gameView");		
 	};
 	
@@ -373,15 +401,19 @@ ChordBrah.controller("editorController", function($rootScope, $scope, $compile) 
 		$scope.displayTrack(song);
 	});
 	
-	$scope.$on("playSelectedSong", function(event, song) {
+	$scope.$on("playSelectedSong", function(event, params) {
 		$scope.clearEditor();
-		$scope.displayTrack(song);
+		$scope.learingMode = params[0];
+		$scope.displayTrack(params[1]);
 		$scope.play();
 	});
 });
 
-ChordBrah.controller("gameMenuController", function($rootScope, $scope) {
+ChordBrah.controller("gameMenuController", function($rootScope, $scope, $location) {
 	$scope.exitToMenu = function() {
+		// remove help label
+		/*$("#helpLabel").css("display", "none");
+		
 		// close GUI
 		$("#gui").css("display", "none");
 		
@@ -403,7 +435,12 @@ ChordBrah.controller("gameMenuController", function($rootScope, $scope) {
 		$("#container").empty();
 		
 		// change to main menu
-		$rootScope.$broadcast("changeView", "menuView");	
+		$rootScope.$broadcast("changeView", "menuView");*/
+		
+		// do scene cleanup
+		clearScene();
+		
+		window.location.reload();
 	};
 });
 

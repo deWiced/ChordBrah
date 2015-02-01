@@ -52,7 +52,8 @@
 				<button id="mainPlayBtn" ng-click="setSongSelect()">Play</button>
 				<button id="editorBtn" ng-click="setEditor()">Editor</button>
 				<button id="optionsBtn" ng-click="setOptions()">Options</button>
-				<!-- <button id="helpBtn">Help</button> -->
+				<button id="helpBtn" ng-click="setHelp()">Help</button>
+				<button id="creditsBtn" ng-click="setCredits()">Credits</button>
 			</div>
 			<div id="songSelect" ng-hide="activeView != 'songSelectView'" ng-controller="songSelectController">
 				<div class="navigation">
@@ -67,6 +68,7 @@
 				</div>
 				<div id="bottomLine">					
 					<button id="playSelectedBtn" ng-click="playSelected()">Play</button>
+					<input type="checkbox" id="learningModeChkBx" ng-model="learingMode"><label id="learingModeInfo">Learning mode: </label>
 					<button id="openInEdtBtn" ng-click="editSelected()">Open in editor</button>
 				</div>				
 			</div>
@@ -108,10 +110,44 @@
 					<button id="clearEditorBtn" ng-click="clearEditor()" style="margin-left:20px">Clear editor</button>
 					<button id="playBtn" ng-click="play()" style="float: right; margin-right: 20px">Play</button>
 					<input type="file" id="openFileBtn"/>
+					<input type="checkbox" id="learningModeChkBx_editor" ng-model="learingMode"><label id="learingModeInfo_editor">Learning mode: </label>
 					<label id="openFileBtn-label" for="openFileBtn">Open</label>
 					<a id="saveTrackBtn" ng-click="saveTrack()" style="float: right; margin-right: 20px" href="" download="">Save track</a>
 					
 					</fieldset>
+				</div>
+			</div>
+			<div id="help" ng-hide="activeView != 'helpView'" ng-controller="helpController">
+				<div class="navigation">
+					<button id="help_backBtn" ng-click="toMenu()">back</button>
+					<label>Help</label>
+				</div>
+				<div id="navodile">
+					<h3>What?</h3>
+					<p id="navodile_text">A game, created as a tool for learning to distinguish between different types of music chords (i.e. ``ear training´´).</p>
+					<h3>Why?</h3>
+					<p id="navodile_text">Because the existing tools for doing so are boring and everyone likes racing and space.</p>
+					<h3>How?</h3>
+					<p id="navodile_text">Load or create a track using ``Editor´´ or choose one of the preloaded options through the ``Play´´ menu.</p>
+					<p id="navodile_text">Each track consists of one or more sections in which up to 4 chords can be selected as the possible answers.</p>
+					<p id="navodile_text">Each chord answer is represented as one of the four possible movement directions.</p>
+					<p id="navodile_text">In the game, blue circles indicate the beginning of a checkpoint.</p>
+					<p id="navodile_text">While driving through the red end marker, the correct directional key for the appropriate answer</p>
+					<p id="navodile_text">(to the currently playing chord) needs to be pressed.</p>
+					<p id="navodile_text">Move using ``WSAD´´ or direction keys. Use ``Space´´ for pausing the game.</p>
+				</div>
+			</div>
+			<div id="credits" ng-hide="activeView != 'creditsView'" ng-controller="creditsController">
+				<div class="navigation">
+					<button id="credits_backBtn" ng-click="toMenu()">back</button>
+					<label>Credits</label>
+				</div>
+				<div id=creditsText>
+					<h2>Created by:</h2>
+					<div id="names">
+						<h3>Anže Čuk & Anej Placer</h3>
+						<h4>Slovenia, 2015</h4>
+						</div>
 				</div>
 			</div>
 			<div id="container" ng-hide="activeView != 'gameView'"></div>
